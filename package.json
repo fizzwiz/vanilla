@@ -1,0 +1,60 @@
+{
+  "name": "@fizzwiz/gaia",
+  "version": "0.0.0-0",
+  "description": "Self-organizing networks of intelligent nodes. — A lightweight library to build adaptive, emergent networks where each node autonomously optimizes its connections, forming a living, distributed connectome.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fizzwiz/gaia.git"
+  },
+  "keywords": [
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "license": "MIT",
+  "author": "Roberto Venditti <err3vi@gmail.com>",
+  "files": [
+    "README.md",
+    "src/main/",
+    "dist/gaia.bundle.js"
+  ],
+  "type": "module",
+  "main": "./src/main/index.js",
+  "exports": {
+    ".": "./src/main/index.js"
+  },
+  "scripts": {
+    "test": "mocha --recursive ./src/test",
+    "lint": "eslint ./src",
+    "doc": "jsdoc -r -c ./jsdoc.json",
+    "build": "webpack --mode production",
+    "prepublishOnly": "npm run doc && npm run build && npm test"
+  },
+  "bugs": {
+    "url": "https://github.com/fizzwiz/gaia/issues"
+  },
+  "homepage": "https://github.com/fizzwiz/gaia#readme",
+  "directories": {
+    "doc": "docs",
+    "test": "src/test"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@fizzwiz/fluent": "github:fizzwiz/fluent",  
+    "@fizzwiz/sorted": "github:fizzwiz/sorted",    
+    "@fizzwiz/ensemble": "github:fizzwiz/ensemble",
+    "@fizzwiz/awaitility": "github:fizzwiz/awaitility"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.5",
+    "@babel/core": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "assert": "2.0.0",
+    "babel-loader": "^9.1.2",
+    "eslint": "^8.56.0",
+    "mocha": "^10.2.0",
+    "supertest": "^7.1.3",
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
