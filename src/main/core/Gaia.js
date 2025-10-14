@@ -94,6 +94,7 @@ export class Gaia extends Solo {
      *   If the sample size is smaller than the number of candidates, some duplicates may occur,
      *   so the actual number of returned sprites may be slightly smaller than the requested sample.
      * - Vibe targets are not restricted to the selected sprites; only sources are filtered.
+     * - by passing `clients = false`, only sprites with a url associated in their payload are returned
      *
      * @param {Array<number>} [center] - Optional array `[longitude, latitude]` of the circle’s center.
      * @param {number} [radius=Infinity] - Radius in meters.
@@ -101,7 +102,7 @@ export class Gaia extends Solo {
      * @returns {{ sprites: Record<string, object>, vibes: Record<string, Array<string>> }} 
      *          Object containing filtered `sprites` and `vibes`.
      */
-    img([long, lat] = [], radius = Infinity, sample = Infinity) {
+    img([long, lat] = [], radius = Infinity, sample = Infinity, clients = true) {
 
         // Collect candidate entries
         let entries;
@@ -112,6 +113,8 @@ export class Gaia extends Solo {
         } else {
             entries = Object.entries(this.sprites);
         }
+
+        if (!clients) entries = entries.filter(([_, payload]) => payload.url);
 
         const sprites = Object.fromEntries(Gaia.sample(entries, sample));
         const spriteIds = new Set(Object.keys(sprites));

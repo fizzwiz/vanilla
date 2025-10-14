@@ -100,9 +100,9 @@ export class GaiaAura extends Aura {
 
     if (this.opts.gaia.sample <= 0) return;
 
-    const gaiaImg = await this.fetchGaiaImg([this.payload?.long, this.payload?.lat], this.opts.gaia.radius, this.opts.gaia.sample);
+    const gaiaImg = await this.fetchGaiaImg([this.payload?.long, this.payload?.lat], this.opts.gaia.radius, this.opts.gaia.sample, false);
 
-    const servers = Gaia.servers(gaiaImg).which(this.serverFilter);
+    const servers = Object.keys(gaiaImg.sprites).filter(this.serverFilter);
     const promises = [];
 
     for (const id of Gaia.sample(servers, this.opts.gaia.sample)) {
