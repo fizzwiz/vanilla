@@ -86,26 +86,50 @@ export class Gaia extends Solo {
     }
 
     /**
-     * Returns a snapshot (img) of the current Gaia state.
+     * 📸 **Takes a snapshot (img) of the current Gaia state.**
      *
-     * - If both a center `[long, lat]` and a finite radius are provided, only geolocated sprites
-     *   within the circular region are included.
-     * - The result can optionally be randomly sampled to limit the number of returned sprites.
-     *   If the sample size is smaller than the number of candidates, some duplicates may occur,
-     *   so the actual number of returned sprites may be slightly smaller than the requested sample.
-     * - Vibe targets are not restricted to the selected sprites; only sources are filtered.
-     * - by passing `clients = false`, only sprites with a url associated in their payload are returned
+     * Produces a filtered and optionally sampled view of the current network,
+     * returning only the sprites and vibes that meet the provided conditions.
      *
-     * @param {Array<number>} [center] - Optional array `[longitude, latitude]` of the circle’s center.
-     * @param {number} [radius=Infinity] - Radius in meters.
-     * @param {number} [sample=Infinity] - Maximum number of sprites to include, randomly sampled.
-     * @returns {{ sprites: Record<string, object>, vibes: Record<string, Array<string>> }} 
-     *          Object containing filtered `sprites` and `vibes`.
+     * ---
+     * ### Behavior
+     * - If both a geographic `center` (`[longitude, latitude]`) and a finite `radius` are provided,
+     *   only **sprites within that circular region** are included.
+     * - The result can be **randomly sampled** using `sample` to limit the number of sprites returned.
+     *   When the sample size is smaller than the total candidates, duplicates may occur,
+     *   so the actual number of unique sprites may be slightly smaller than requested.
+     * - **Vibe targets** are not restricted to the selected sprites — only **source sprites** are filtered.
+     * - By default, all sprites are included (both servers and clients).
+     *   Set `requireUrl = true` to restrict the snapshot to only **server-type sprites**
+     *   (those exposing a `payload.url` property).
+     *
+     * ---
+     * @param {number[]} [center] - Optional `[longitude, latitude]` defining the circle’s center.
+     * @param {number} [radius=Infinity] - Optional radius (in meters) for geographic filtering.
+     * @param {number} [sample=Infinity] - Optional maximum number of sprites to include, randomly sampled.
+     * @param {boolean} [requireUrl=false] - Whether to include **only sprites with a defined `payload.url`**.
+     *
+     * @returns {{ sprites: Record<string, object>, vibes: Record<string, string[]> }}
+     *          An object containing:
+     *          - `sprites`: Filtered or sampled sprite records.
+     *          - `vibes`: Outgoing vibes whose **source** sprites are among the selected ones.
+     *
+     * @example
+     * // Get all sprites within 5km of a given location
+     * const snapshot = gaia.img([12.4924, 41.8902], 5000);
+     *
+     * @example
+     * // Get a random sample of up to 100 server-only sprites (requireUrl = true)
+     * const snapshot = gaia.img(undefined, Infinity, 100, true);
+     *
+     * @example
+     * // Full state dump (all sprites, clients + servers)
+     * const snapshot = gaia.img();
      */
-    img([long, lat] = [], radius = Infinity, sample = Infinity, clients = true) {
-
-        // Collect candidate entries
+    img([long, lat] = [], radius = Infinity, sample = Infinity, requireUrl = false) {
+        // Collect candidate sprite entries
         let entries;
+
         if (Number.isFinite(long) && Number.isFinite(lat) && Number.isFinite(radius)) {
             entries = Object.entries(this.sprites).filter(
                 ([, payload]) => Gaia.dist([long, lat], [payload.long, payload.lat]) < radius
@@ -114,15 +138,15 @@ export class Gaia extends Solo {
             entries = Object.entries(this.sprites);
         }
 
-        if (!clients) entries = entries.filter(([_, payload]) => payload.url);
+        // Optionally restrict to sprites having a defined URL (servers)
+        if (requireUrl) entries = entries.filter(([_, payload]) => payload.url);
 
         const sprites = Object.fromEntries(Gaia.sample(entries, sample));
         const spriteIds = new Set(Object.keys(sprites));
 
         // Keep only vibes whose source sprite is selected
         const vibes = Object.fromEntries(
-            Object.entries(this.vibes)
-                .filter(([id]) => spriteIds.has(id))
+            Object.entries(this.vibes).filter(([id]) => spriteIds.has(id))
         );
 
         return { sprites, vibes };

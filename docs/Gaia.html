@@ -492,7 +492,7 @@
     
 
     
-    <h4 class="name" id="img"><span class="type-signature"></span>img<span class="signature">(center<span class="signature-attributes">opt</span>, radius<span class="signature-attributes">opt</span>, sample<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id="img"><span class="type-signature"></span>img<span class="signature">(center<span class="signature-attributes">opt</span>, radius<span class="signature-attributes">opt</span>, sample<span class="signature-attributes">opt</span>, requireUrl<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -500,16 +500,23 @@
 
 
 <div class="description">
-    <p>Returns a snapshot (img) of the current Gaia state.</p>
+    <p>📸 <strong>Takes a snapshot (img) of the current Gaia state.</strong></p>
+<p>Produces a filtered and optionally sampled view of the current network,
+returning only the sprites and vibes that meet the provided conditions.</p>
+<hr>
+<h3>Behavior</h3>
 <ul>
-<li>If both a center <code>[long, lat]</code> and a finite radius are provided, only geolocated sprites
-within the circular region are included.</li>
-<li>The result can optionally be randomly sampled to limit the number of returned sprites.
-If the sample size is smaller than the number of candidates, some duplicates may occur,
-so the actual number of returned sprites may be slightly smaller than the requested sample.</li>
-<li>Vibe targets are not restricted to the selected sprites; only sources are filtered.</li>
-<li>by passing <code>clients = false</code>, only sprites with a url associated in their payload are returned</li>
+<li>If both a geographic <code>center</code> (<code>[longitude, latitude]</code>) and a finite <code>radius</code> are provided,
+only <strong>sprites within that circular region</strong> are included.</li>
+<li>The result can be <strong>randomly sampled</strong> using <code>sample</code> to limit the number of sprites returned.
+When the sample size is smaller than the total candidates, duplicates may occur,
+so the actual number of unique sprites may be slightly smaller than requested.</li>
+<li><strong>Vibe targets</strong> are not restricted to the selected sprites — only <strong>source sprites</strong> are filtered.</li>
+<li>By default, all sprites are included (both servers and clients).
+Set <code>requireUrl = true</code> to restrict the snapshot to only <strong>server-type sprites</strong>
+(those exposing a <code>payload.url</code> property).</li>
 </ul>
+<hr>
 </div>
 
 
@@ -579,7 +586,7 @@ so the actual number of returned sprites may be slightly smaller than the reques
                 </td>
             
 
-            <td class="description last"><p>Optional array <code>[longitude, latitude]</code> of the circle’s center.</p></td>
+            <td class="description last"><p>Optional <code>[longitude, latitude]</code> defining the circle’s center.</p></td>
         </tr>
 
     
@@ -618,7 +625,7 @@ so the actual number of returned sprites may be slightly smaller than the reques
                 </td>
             
 
-            <td class="description last"><p>Radius in meters.</p></td>
+            <td class="description last"><p>Optional radius (in meters) for geographic filtering.</p></td>
         </tr>
 
     
@@ -657,7 +664,46 @@ so the actual number of returned sprites may be slightly smaller than the reques
                 </td>
             
 
-            <td class="description last"><p>Maximum number of sprites to include, randomly sampled.</p></td>
+            <td class="description last"><p>Optional maximum number of sprites to include, randomly sampled.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>requireUrl</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether to include <strong>only sprites with a defined <code>payload.url</code></strong>.</p></td>
         </tr>
 
     
@@ -722,7 +768,9 @@ so the actual number of returned sprites may be slightly smaller than the reques
 
         
 <div class="param-desc">
-    <p>Object containing filtered <code>sprites</code> and <code>vibes</code>.</p>
+    <p>An object containing:
+- <code>sprites</code>: Filtered or sampled sprite records.
+- <code>vibes</code>: Outgoing vibes whose <strong>source</strong> sprites are among the selected ones.</p>
 </div>
 
 
@@ -742,6 +790,15 @@ so the actual number of returned sprites may be slightly smaller than the reques
     
 
 
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Get all sprites within 5km of a given locationconst snapshot = gaia.img([12.4924, 41.8902], 5000);</code></pre>
+
+    <pre class="prettyprint"><code>// Get a random sample of up to 100 server-only sprites (requireUrl = true)const snapshot = gaia.img(undefined, Infinity, 100, true);</code></pre>
+
+    <pre class="prettyprint"><code>// Full state dump (all sprites, clients + servers)const snapshot = gaia.img();</code></pre>
 
 
 
@@ -1629,7 +1686,7 @@ Existing sprites and vibes are updated or extended in place.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Oct 14 2025 20:04:35 GMT+0200 (Ora legale dell’Europa centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Oct 14 2025 20:14:04 GMT+0200 (Ora legale dell’Europa centrale)
 </footer>
 
 <script> prettyPrint(); </script>
