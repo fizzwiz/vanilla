@@ -1,53 +1,52 @@
 import { Solo } from "@fizzwiz/ensemble";
 
 /**
- * 🌌 Aura
- * --------
+ * 🌌 **Aura**
+ * ------------
  * Abstract base class for discovering and attaching `Vibe` connections to a `Sprite`.
  *
  * In Gaia’s distributed ecosystem, an **Aura** represents a *field of discovery*
  * that surrounds a `Sprite`. It defines how the Sprite perceives and establishes
  * new connections (`Vibes`) within its environment.
  *
- * Subclasses implement specific discovery mechanisms:
+ * ---
+ * 🧩 **Subclassing**
  * - `GaiaAura` — Periodically queries the Gaia network for nearby Sprites.
  * - `HttpAura` — Listens for incoming WebSocket or HTTP requests to form new Vibes.
  *
- * An Aura does not *own* its Sprite; rather, it *enriches* it by managing its
- * connectivity field. It can operate independently, even without being added
- * to `sprite.auras`.
+ * ---
+ * 💫 **Attachment Model**
+ * Auras are not bound to a Sprite at construction time.  
+ * Instead, they are explicitly attached by adding them to the Sprite’s `auras` ensemble:
  *
+ * ```js
+ * const aura = new GaiaAura();
+ * sprite.auras.add("gaia", aura);
+ * console.log(aura.sprite === sprite); // true
+ * ```
+ *
+ * ---
  * @abstract
  */
 export class Aura extends Solo {
-  /**
-   * The Sprite this Aura surrounds.
-   * @type {Sprite}
-   */
-  target;
 
-  /**
-   * @param {Sprite} target - The Sprite this Aura surrounds.
-   */
-  constructor(target) {
+  constructor() {
     super();
-    this.target = target;
   }
 
   /**
-   * Adds this Aura to the `sprite.auras` 
-   * This is useful for:
-   * - event propagation - it allows the Sprite to receive all events emitted by the Aura.
-   * - life cycle coordination - play()/pause() the sprite automatically play()/pause() the Aura
-   * 
-   * @param {string} name 
+   * Returns the Sprite that owns this Aura.
+   *
+   * Relationship chain:
+   * ```
+   * this (Aura)
+   *   → this.ensemble (sprite.auras)
+   *       → this.ensemble.ensemble (sprite)
+   * ```
+   *
+   * @returns {Sprite|undefined} The owning Sprite, or `undefined` if not attached.
    */
-  connect(name) {
-    this.target.auras.add(name, this);
-    return this;
+  get sprite() {
+    return this.ensemble?.ensemble;
   }
-  
 }
-
-  
-  

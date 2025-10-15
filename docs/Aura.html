@@ -28,21 +28,28 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature">(abstract) </span></span>Aura<span class="signature">(target)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature">(abstract) </span></span>Aura<span class="signature">()</span><span class="type-signature"></span></h2>
         
-            <div class="class-description"><h2>🌌 Aura</h2>
+            <div class="class-description"><h2>🌌 <strong>Aura</strong></h2>
 <p>Abstract base class for discovering and attaching <code>Vibe</code> connections to a <code>Sprite</code>.</p>
 <p>In Gaia’s distributed ecosystem, an <strong>Aura</strong> represents a <em>field of discovery</em>
 that surrounds a <code>Sprite</code>. It defines how the Sprite perceives and establishes
 new connections (<code>Vibes</code>) within its environment.</p>
-<p>Subclasses implement specific discovery mechanisms:</p>
+<hr>
+<p>🧩 <strong>Subclassing</strong></p>
 <ul>
 <li><code>GaiaAura</code> — Periodically queries the Gaia network for nearby Sprites.</li>
 <li><code>HttpAura</code> — Listens for incoming WebSocket or HTTP requests to form new Vibes.</li>
 </ul>
-<p>An Aura does not <em>own</em> its Sprite; rather, it <em>enriches</em> it by managing its
-connectivity field. It can operate independently, even without being added
-to <code>sprite.auras</code>.</p></div>
+<hr>
+<p>💫 <strong>Attachment Model</strong>
+Auras are not bound to a Sprite at construction time.<br>
+Instead, they are explicitly attached by adding them to the Sprite’s <code>auras</code> ensemble:</p>
+<pre class="prettyprint source lang-js"><code>const aura = new GaiaAura();
+sprite.auras.add(&quot;gaia&quot;, aura);
+console.log(aura.sprite === sprite); // true
+</code></pre>
+<hr></div>
         
     
 </header>
@@ -57,7 +64,7 @@ to <code>sprite.auras</code>.</p></div>
     
 
     
-    <h4 class="name" id="Aura"><span class="type-signature">(abstract) </span>new Aura<span class="signature">(target)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Aura"><span class="type-signature">(abstract) </span>new Aura<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -70,55 +77,6 @@ to <code>sprite.auras</code>.</p></div>
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>target</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Sprite.html">Sprite</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The Sprite this Aura surrounds.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -206,26 +164,21 @@ to <code>sprite.auras</code>.</p></div>
 
         
             
-<h4 class="name" id="target"><span class="type-signature"></span>target<span class="type-signature"> :<a href="Sprite.html">Sprite</a></span></h4>
+<h4 class="name" id="sprite"><span class="type-signature"></span>sprite<span class="type-signature"></span></h4>
 
 
 
 
 <div class="description">
-    <p>The Sprite this Aura surrounds.</p>
+    <p>Returns the Sprite that owns this Aura.</p>
+<p>Relationship chain:</p>
+<pre class="prettyprint source"><code>this (Aura)
+  → this.ensemble (sprite.auras)
+      → this.ensemble.ensemble (sprite)
+</code></pre>
 </div>
 
 
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type"><a href="Sprite.html">Sprite</a></span>
-
-
-        </li>
-    </ul>
 
 
 
@@ -274,147 +227,6 @@ to <code>sprite.auras</code>.</p></div>
         
     
 
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="connect"><span class="type-signature"></span>connect<span class="signature">(name)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Adds this Aura to the <code>sprite.auras</code>
-This is useful for:</p>
-<ul>
-<li>event propagation - it allows the Sprite to receive all events emitted by the Aura.</li>
-<li>life cycle coordination - play()/pause() the sprite automatically play()/pause() the Aura</li>
-</ul>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
     
 
     
@@ -430,13 +242,13 @@ This is useful for:</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="aura%250D-%2520%257B@link%2520GaiaAura%257D%250D-%2520%257B@link%2520HttpAura%257Dmodule_.html">aura- <a href="GaiaAura.html">GaiaAura</a>- <a href="HttpAura.html">HttpAura</a></a></li><li><a href="core%250D-%2520%257B@link%2520Aura%257D%250D-%2520%257B@link%2520Gaia%257D%250D-%2520%257B@link%2520Sprite%257D%250D-%2520%257B@link%2520Vibe%257Dmodule_.html">core- <a href="Aura.html">Aura</a>- <a href="Gaia.html">Gaia</a>- <a href="Sprite.html">Sprite</a>- <a href="Vibe.html">Vibe</a></a></li></ul><h3>Classes</h3><ul><li><a href="Aura.html">Aura</a></li><li><a href="Gaia.html">Gaia</a></li><li><a href="GaiaAura.html">GaiaAura</a></li><li><a href="HttpAura.html">HttpAura</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="Vibe.html">Vibe</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="aura%250D-%2520%257B@link%2520GaiaAura%257D%250D-%2520%257B@link%2520HttpAura%257Dmodule_.html">aura- <a href="GaiaAura.html">GaiaAura</a>- <a href="HttpAura.html">HttpAura</a></a></li><li><a href="core%250D-%2520%257B@link%2520Aura%257D%250D-%2520%257B@link%2520Gaia%257D%250D-%2520%257B@link%2520Sprite%257D%250D-%2520%257B@link%2520Vibe%257Dmodule_.html">core- <a href="Aura.html">Aura</a>- <a href="Gaia.html">Gaia</a>- <a href="Sprite.html">Sprite</a>- <a href="Vibe.html">Vibe</a></a></li></ul><h3>Classes</h3><ul><li><a href="Aura.html">Aura</a></li><li><a href="Gaia.html">Gaia</a></li><li><a href="GaiaAura.html">GaiaAura</a></li><li><a href="HttpAura.html">HttpAura</a></li><li><a href="Node.html">Node</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="Vibe.html">Vibe</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Oct 14 2025 20:14:04 GMT+0200 (Ora legale dell’Europa centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Oct 15 2025 16:45:57 GMT+0200 (Ora legale dell’Europa centrale)
 </footer>
 
 <script> prettyPrint(); </script>

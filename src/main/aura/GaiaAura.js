@@ -2,21 +2,34 @@ import { Aura } from "../core/Aura.js";
 import { Vibe } from "../core/Vibe.js";
 
 /**
- * 🌍 GaiaAura
- * ------------
- * Surrounds a Sprite with a dynamic awareness of Gaia.
+ * 🌍 **GaiaAura**
+ * ---------------
+ * Surrounds a Sprite with a dynamic awareness of Gaia — the distributed network map.
  *
  * Periodically:
- * - Refreshes authentication tokens.
- * - Queries Gaia for updated network topology.
- * - Samples nearby Sprites offering WebSocket endpoints.
- * - Feeds the target Sprite with live `Vibe` connections.
+ * - Queries Gaia for updated network topology (`refreshGaiaImg`).
+ * - Samples nearby Sprites offering WebSocket endpoints (`feedVibes`).
+ * - Feeds the target Sprite with live {@link Vibe} connections.
  *
- * Designed as the “environmental intelligence” of a Sprite.
+ * This class serves as the **environmental intelligence** of a Sprite,
+ * keeping it aware of its surrounding peers in the distributed topology.
+ *
+ * ---
+ * 🧠 **Token Management**
+ * The `GaiaAura` no longer refreshes tokens on its own.
+ * It retrieves the token directly from its owning {@link Node} through:
+ * ```js
+ * this.token = this.sprite?.node?.token
+ * ```
+ * ensuring that token lifecycles are centralized and consistent across Auras.
  */
-
 export class GaiaAura extends Aura {
-
+  /**
+   * @param {Sprite} target - The Sprite this Aura surrounds.
+   * @param {object} opts - Configuration options for Gaia and Vibe discovery.
+   * @param {Function} wsConstructor - WebSocket constructor (or compatible).
+   * @param {function(string): boolean} [serverFilter=() => true] - Optional filter for Gaia servers.
+   */
   constructor(target, opts, wsConstructor, serverFilter = () => true) {
     super(target);
 
@@ -24,89 +37,127 @@ export class GaiaAura extends Aura {
     this.wsConstructor = wsConstructor;
     this.serverFilter = serverFilter;
     this.gaiaImg = undefined;
-    this.token = undefined;
 
-    const tokenRefresher =
-      AsyncWhat.as(this.refreshToken.bind(this))
-        .self(2000)
-        .else(err => this.notify('error', err));
+    const gaiaImgRefresher = AsyncWhat.as(this.refreshGaiaImg.bind(this))
+      .self(5000)
+      .else(err => this.notify("error", err));
 
-    const gaiaImgRefresher =
-      AsyncWhat.as(this.refreshGaiaImg.bind(this))
-        .self(5000)
-        .else(err => this.notify('error', err));
-
-    const vibeFeeder =
-      AsyncWhat.as(this.feedVibes.bind(this))
-        .self(2000)
-        .else(err => this.notify('error', err));
+    const vibeFeeder = AsyncWhat.as(this.feedVibes.bind(this))
+      .self(2000)
+      .else(err => this.notify("error", err));
 
     this
-      .ostinato("refreshToken", tokenRefresher, Infinity, this.opts.web.beat, 1)
       .ostinato("refreshGaiaImg", gaiaImgRefresher, Infinity, this.opts.gaia.beat, 1)
       .ostinato("feedVibes", vibeFeeder, Infinity, this.opts.vibe.beat, 1);
   }
 
-  get payload() {
-    return this.gaiaImg?.sprites[this.target.id];
+  /**
+   * Retrieves the current authentication token from the owning Node (if any).
+   * @returns {string|undefined}
+   */
+  get token() {
+    return this.sprite?.node?.token;
   }
 
+  /**
+   * Returns this Sprite’s payload within the current Gaia image.
+   * @returns {object|undefined}
+   */
+  get payload() {
+    return this.gaiaImg?.sprites?.[this.target.id];
+  }
+
+  /**
+   * Returns the minimal Gaia image representing only this Sprite and its vibes.
+   * Useful for posting self-descriptions to Gaia.
+   *
+   * @returns {{sprites: Record<string, object>, vibes: Record<string, string[]>}}
+   */
   get img() {
     const sprites = Object.fromEntries([[this.target.id, this.payload]]);
-    const vibes = Object.fromEntries([[this.target.id, Array.from(Object.keys(this.target.vibes))]]);
+    const vibes = Object.fromEntries([
+      [this.target.id, Array.from(Object.keys(this.target.vibes))]
+    ]);
     return { sprites, vibes };
   }
 
-  async refreshToken() {
-    const token = await this.fetchToken();
-    this.token = token;
-  }
-
-  async fetchToken() {
-    const res = await fetch(this.opts.web.url);
-    if (!res.ok) throw new Error(`Token fetch failed: HTTP ${res.status} ${res.statusText}`);
-    return res.text();
-  }
-
+  /**
+   * Fetches the latest Gaia image describing the Sprite’s surroundings.
+   * The image is stored internally as `this.gaiaImg`.
+   *
+   * @returns {Promise<void>}
+   */
   async refreshGaiaImg() {
-    if (!this.token) await this.refreshToken();
-    const gaiaImg = await this.fetchGaiaImg([this.payload?.long, this.payload?.lat], this.opts.gaia.radius, Infinity);
+    if (!this.token) {
+      this.notify("warning", "No token available from owning Node");
+      return;
+    }
+
+    const { long, lat } = this.payload || {};
+    const gaiaImg = await this.fetchGaiaImg([long, lat], this.opts.gaia.radius, Infinity);
     this.gaiaImg = gaiaImg;
   }
 
+  /**
+   * Requests a Gaia image from the configured Gaia service.
+   *
+   * @param {number[]} [center] - [longitude, latitude]
+   * @param {number} [radius] - Sampling radius in meters
+   * @param {number} [sample=this.opts.gaia.sample] - Number of Sprites to sample
+   * @returns {Promise<object>} The Gaia image (sprites + vibes)
+   */
   async fetchGaiaImg([long, lat], radius, sample = this.opts.gaia.sample) {
+    const token = this.token;
+    if (!token) throw new Error("Missing authentication token");
+
     const res = await fetch(
       `${this.opts.gaia.url}?${Gaia.imgQuery([long, lat], radius, sample)}`,
       {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${this.token}`,
-          "Content-Type": "application/json"
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(this.img)
+        body: JSON.stringify(this.img),
       }
     );
-    if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+
+    if (!res.ok)
+      throw new Error(`Gaia fetch failed: HTTP ${res.status} ${res.statusText}`);
+
     return res.json();
   }
 
-    /**
-     * Samples Gaia for nearby Sprites exposing WebSocket endpoints
-     * and feeds the target Sprite with live `Vibe` connections.
-     *
-     * Each new connection is immediately evaluated with a ping.
-     */
-    async feedVibes() { 
-
+  /**
+   * Samples Gaia for nearby Sprites exposing WebSocket endpoints
+   * and feeds the target Sprite with live {@link Vibe} connections.
+   *
+   * Each connection is immediately validated with a `ping()`.
+   * 
+   * @returns {Promise<void>}
+   */
+  async feedVibes() {
     if (this.opts.gaia.sample <= 0) return;
+    if (!this.token) {
+      this.notify("warning", "Cannot feed vibes — missing token from Node");
+      return;
+    }
 
-    const gaiaImg = await this.fetchGaiaImg([this.payload?.long, this.payload?.lat], this.opts.gaia.radius, this.opts.gaia.sample, true);
+    const { long, lat } = this.payload || {};
+    const gaiaImg = await this.fetchGaiaImg(
+      [long, lat],
+      this.opts.gaia.radius,
+      this.opts.gaia.sample
+    );
 
     const servers = Object.keys(gaiaImg.sprites).filter(this.serverFilter);
     const promises = [];
 
     for (const id of Gaia.sample(servers, this.opts.gaia.sample)) {
-      const ws = new this.wsConstructor(gaiaImg.sprites[id].url);
+      const { url } = gaiaImg.sprites[id];
+      if (!url) continue;
+
+      const ws = new this.wsConstructor(url);
       const vibe = new Vibe(ws);
       this.target.vibes.add(id, vibe);
       promises.push(vibe.ping());
@@ -114,5 +165,4 @@ export class GaiaAura extends Aura {
 
     await Promise.all(promises);
   }
-
 }

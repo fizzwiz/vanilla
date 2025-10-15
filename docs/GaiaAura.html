@@ -28,18 +28,25 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>GaiaAura<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>GaiaAura<span class="signature">(target, opts, wsConstructor, serverFilter<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description"><h2>🌍 GaiaAura</h2>
-<p>Surrounds a Sprite with a dynamic awareness of Gaia.</p>
+            <div class="class-description"><h2>🌍 <strong>GaiaAura</strong></h2>
+<p>Surrounds a Sprite with a dynamic awareness of Gaia — the distributed network map.</p>
 <p>Periodically:</p>
 <ul>
-<li>Refreshes authentication tokens.</li>
-<li>Queries Gaia for updated network topology.</li>
-<li>Samples nearby Sprites offering WebSocket endpoints.</li>
-<li>Feeds the target Sprite with live <code>Vibe</code> connections.</li>
+<li>Queries Gaia for updated network topology (<code>refreshGaiaImg</code>).</li>
+<li>Samples nearby Sprites offering WebSocket endpoints (<code>feedVibes</code>).</li>
+<li>Feeds the target Sprite with live <a href="Vibe.html">Vibe</a> connections.</li>
 </ul>
-<p>Designed as the “environmental intelligence” of a Sprite.</p></div>
+<p>This class serves as the <strong>environmental intelligence</strong> of a Sprite,
+keeping it aware of its surrounding peers in the distributed topology.</p>
+<hr>
+<p>🧠 <strong>Token Management</strong>
+The <code>GaiaAura</code> no longer refreshes tokens on its own.
+It retrieves the token directly from its owning <a href="Node.html">Node</a> through:</p>
+<pre class="prettyprint source lang-js"><code>this.token = this.sprite?.node?.token
+</code></pre>
+<p>ensuring that token lifecycles are centralized and consistent across Auras.</p></div>
         
     
 </header>
@@ -54,7 +61,7 @@
     
 
     
-    <h4 class="name" id="GaiaAura"><span class="type-signature"></span>new GaiaAura<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="GaiaAura"><span class="type-signature"></span>new GaiaAura<span class="signature">(target, opts, wsConstructor, serverFilter<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -67,6 +74,180 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Sprite.html">Sprite</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The Sprite this Aura surrounds.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>opts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Configuration options for Gaia and Vibe discovery.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>wsConstructor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>WebSocket constructor (or compatible).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>serverFilter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    () => true
+                
+                </td>
+            
+
+            <td class="description last"><p>Optional filter for Gaia servers.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -150,6 +331,182 @@
     
 
     
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="img"><span class="type-signature"></span>img<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Returns the minimal Gaia image representing only this Sprite and its vibes.
+Useful for posting self-descriptions to Gaia.</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="payload"><span class="type-signature"></span>payload<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Returns this Sprite’s payload within the current Gaia image.</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="token"><span class="type-signature"></span>token<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Retrieves the current authentication token from the owning Node (if any).</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -160,7 +517,7 @@
     
 
     
-    <h4 class="name" id="feedVibes"><span class="type-signature">(async) </span>feedVibes<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="feedVibes"><span class="type-signature">(async) </span>feedVibes<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
     
 
     
@@ -169,8 +526,8 @@
 
 <div class="description">
     <p>Samples Gaia for nearby Sprites exposing WebSocket endpoints
-and feeds the target Sprite with live <code>Vibe</code> connections.</p>
-<p>Each new connection is immediately evaluated with a ping.</p>
+and feeds the target Sprite with live <a href="Vibe.html">Vibe</a> connections.</p>
+<p>Each connection is immediately validated with a <code>ping()</code>.</p>
 </div>
 
 
@@ -234,6 +591,374 @@ and feeds the target Sprite with live <code>Vibe</code> connections.</p>
 
 
 
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="fetchGaiaImg"><span class="type-signature">(async) </span>fetchGaiaImg<span class="signature">(center<span class="signature-attributes">opt</span>, radius<span class="signature-attributes">opt</span>, sample<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;object>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Requests a Gaia image from the configured Gaia service.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>center</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>[longitude, latitude]</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>radius</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Sampling radius in meters</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sample</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    this.opts.gaia.sample
+                
+                </td>
+            
+
+            <td class="description last"><p>Number of Sprites to sample</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The Gaia image (sprites + vibes)</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;object></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="refreshGaiaImg"><span class="type-signature">(async) </span>refreshGaiaImg<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Fetches the latest Gaia image describing the Sprite’s surroundings.
+The image is stored internally as <code>this.gaiaImg</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -255,13 +980,13 @@ and feeds the target Sprite with live <code>Vibe</code> connections.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="aura%250D-%2520%257B@link%2520GaiaAura%257D%250D-%2520%257B@link%2520HttpAura%257Dmodule_.html">aura- <a href="GaiaAura.html">GaiaAura</a>- <a href="HttpAura.html">HttpAura</a></a></li><li><a href="core%250D-%2520%257B@link%2520Aura%257D%250D-%2520%257B@link%2520Gaia%257D%250D-%2520%257B@link%2520Sprite%257D%250D-%2520%257B@link%2520Vibe%257Dmodule_.html">core- <a href="Aura.html">Aura</a>- <a href="Gaia.html">Gaia</a>- <a href="Sprite.html">Sprite</a>- <a href="Vibe.html">Vibe</a></a></li></ul><h3>Classes</h3><ul><li><a href="Aura.html">Aura</a></li><li><a href="Gaia.html">Gaia</a></li><li><a href="GaiaAura.html">GaiaAura</a></li><li><a href="HttpAura.html">HttpAura</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="Vibe.html">Vibe</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="aura%250D-%2520%257B@link%2520GaiaAura%257D%250D-%2520%257B@link%2520HttpAura%257Dmodule_.html">aura- <a href="GaiaAura.html">GaiaAura</a>- <a href="HttpAura.html">HttpAura</a></a></li><li><a href="core%250D-%2520%257B@link%2520Aura%257D%250D-%2520%257B@link%2520Gaia%257D%250D-%2520%257B@link%2520Sprite%257D%250D-%2520%257B@link%2520Vibe%257Dmodule_.html">core- <a href="Aura.html">Aura</a>- <a href="Gaia.html">Gaia</a>- <a href="Sprite.html">Sprite</a>- <a href="Vibe.html">Vibe</a></a></li></ul><h3>Classes</h3><ul><li><a href="Aura.html">Aura</a></li><li><a href="Gaia.html">Gaia</a></li><li><a href="GaiaAura.html">GaiaAura</a></li><li><a href="HttpAura.html">HttpAura</a></li><li><a href="Node.html">Node</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="Vibe.html">Vibe</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Oct 14 2025 20:14:04 GMT+0200 (Ora legale dell’Europa centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Oct 15 2025 16:45:57 GMT+0200 (Ora legale dell’Europa centrale)
 </footer>
 
 <script> prettyPrint(); </script>

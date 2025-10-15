@@ -2,11 +2,14 @@ import { Ensemble, Solo } from "@fizzwiz/ensemble";
 import { SortedArray, ORDER } from "@fizzwiz/sorted";
 
 /**
- * Represents a distributed network node (Sprite) that autonomously maintains
+ * Represents a distributed network unit that autonomously maintains
  * its connectivity and state.
  *
  * Sprites are fed by one or more `Aura` instances that manage discovery
  * and the creation of `Vibe` connections.
+ * 
+ * The Sprite is usually added to the sprites ensemble of some Node. The property 'node' retrieves the node
+ * this sprite belongs to.
  *
  * ---
  * 🧩 **Ensemble Structure**
@@ -64,6 +67,14 @@ export class Sprite extends Solo {
     this
       .ostinato("refreshVibes", vibeRefresher, Infinity, this.opts.beat, 1)
       .cue("closeCue", this, "close", this.onClose.bind(this));
+  }
+
+  /**
+   * The node owning this sprite
+   */
+  get node() {
+    return this.ensemble?. // node.sprites
+      ensemble;
   }
 
   /** @returns {Ensemble} */
@@ -162,6 +173,50 @@ export class Sprite extends Solo {
     if (!predicate(vibe)) throw error;
     vibe.primo.send(msg);
     return true; // Needed so AsyncWhat.self() recognizes success and stops retrying
+  }
+
+  /**
+   * 🆔 **Generates a unique Sprite identifier.**
+   *
+   * Each Sprite belongs to an owner. The Sprite’s identifier encodes both the
+   * owner and its local name using the format:
+   *
+   * ```text
+   * <owner>:<name>
+   * ```
+   *
+   * This makes Sprite IDs globally unique within the distributed network.
+   * Sprite options are typically stored within the owner's user database.
+   *
+   * @param {*} owner - The owner of the Sprite (usually a user ID).
+   * @param {*} name - The Sprite’s local name or role under the owner.
+   * @returns {string} The encoded Sprite ID, e.g. `"alice:chatbot"`.
+   *
+   * @example
+   * const id = Sprite.id("alice", "chatbot");
+   * console.log(id); // "alice:chatbot"
+   */
+  static id(owner, name) {
+    return `${owner}:${name}`;
+  }
+
+  /**
+   * 🧩 **Parses a Sprite ID into its components.**
+   *
+   * Given a Sprite identifier in the `<owner>:<name>` format,
+   * returns an object with separate `owner` and `name` fields.
+   *
+   * @param {string} id - The Sprite identifier to parse.
+   * @returns {{ owner: string, name: string }} 
+   *          Object containing the parsed `owner` and `name`.
+   *
+   * @example
+   * const parsed = Sprite.parseId("alice:chatbot");
+   * console.log(parsed); // { owner: "alice", name: "chatbot" }
+   */
+  static parseId(id) {
+    const split = id.split(":");
+    return { owner: split[0], name: split[1] };
   }
 
 

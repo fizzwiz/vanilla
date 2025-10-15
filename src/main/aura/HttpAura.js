@@ -18,18 +18,14 @@ export class HttpAura extends Aura {
   /**
    * Creates a new HttpAura.
    *
-   * @param {Object} target - The Sprite instance this Aura feeds.
    * @param {Object} wsServer - An existing WebSocketServer instance.
    * @param {Function} [filter] - Optional connection filter.
    *   Receives the incoming HTTP request and should return `true` to allow the
    *   connection or `false` to reject it.
    *
-   * @example
-   * // Create an HttpAura feeding a Sprite from an existing WebSocket server
-   * const aura = new HttpAura(sprite, wsServer, req => req.headers.origin === "https://trusted.app");
    */
-  constructor(target, wsServer, filter = () => true) {
-    super(target);
+  constructor(wsServer, filter = () => true) {
+    super();
     this.wsServer = wsServer;
     this.filter = filter;
 
@@ -80,8 +76,8 @@ export class HttpAura extends Aura {
     }
 
     const vibe = new Vibe(ws);
-    this.target.vibes.add(req.token.id, vibe);
+    this.sprite.vibes.add(req.token.id, vibe);
 
-    this.notify("info", `✨ HttpAura added new Vibe from Sprite ${req.token.id} to Sprite ${this.target.id}`);
+    this.notify("info", `✨ HttpAura added new Vibe from Sprite ${req.token.id} to Sprite ${this.sprite.id}`);
   }
 }

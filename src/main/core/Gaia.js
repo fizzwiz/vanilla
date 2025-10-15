@@ -1,5 +1,5 @@
 import { Solo } from "@fizzwiz/ensemble";
-import { HttpHandler, Req, Res, Path } from "@fizzwiz/awaitility";
+import { HttpHandler, Res, Path } from "@fizzwiz/awaitility";
 import { Each } from "@fizzwiz/fluent";
 
 /**
@@ -151,6 +151,7 @@ export class Gaia extends Solo {
 
         return { sprites, vibes };
     }
+
 
     /**
      * Randomly selects up to `n` entries from the provided array.
