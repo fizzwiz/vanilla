@@ -5,49 +5,19 @@ import { Ensemble, Solo } from "@fizzwiz/ensemble";
  * ------------
  * Represents a participant in the distributed computation network.
  *
- * A Node can **request**, **transport**, or **execute** computations.
- * These roles are realized through one or more attached {@link Sprite} instances.
+ * Each Node belongs to a **user**, whose state (`this.user`) includes
+ * the Node’s configuration (`user.node.opts`).
  *
- * Internally, a Node is a {@link Solo} containing an {@link Ensemble} of Sprites,
- * allowing it to manage multiple specialized Sprites that cooperate in distributed workflows.
+ * A Node must be bootstrapped with enough information to:
+ * - periodically refresh its authentication token, and
+ * - periodically refresh its full user record.
  *
- * ---
- * 🧩 **Structure**
- * - `this.sprites` — An Ensemble containing all Sprites managed by this Node.
- * - `this.opts` — The configuration object. It may define token and self-refresh policies.
- *
- * ---
- * ⚙️ **Dynamic Behavior**
- * - Periodically refreshes an authentication token (if `opts.token` provides `{ url, beat }`).
- *   This token can then be used by Sprites and their Auras for authenticated operations
- *   (e.g., Gaia topology discovery).
- * - Periodically refreshes its configuration (`opts.self` with `{ url, beat }`),
- *   then invokes its subclass-defined {@link sync} method to reconfigure internal structure.
- *
- * Subclasses implement their own `sync()` method to reconcile the Node’s state
- * with the latest configuration (`this.opts`), which may include updates
- * to its Sprites, Auras, or network topology.
- *
- * ---
- * @example
- * // Create a Node that periodically refreshes its token and configuration
- * const node = new Node({
- *   token: { url: "https://auth.local/token", beat: 30_000 },
- *   self: { url: "https://config.local/node.json", beat: 60_000 },
- * });
- *
- * node.sprites.add("main", new Sprite("alice:main"));
- * node.sprites.add("worker", new Sprite("alice:worker"));
- *
- * console.log(node.sprites.keys()); // → ["main", "worker"]
+ * Without these, the Node cannot self-organize and will throw on construction.
  */
 export class Node extends Solo {
   /**
-   * 
-   * Synchronizes this Node’s structure with the current configuration (`this.opts`).
-   * Must be implemented by subclasses.
-   *
-   * @returns {Promise<void>}
+   * Subclasses must implement this to synchronize the Node’s structure
+   * with the current user configuration (`this.user`).
    * @abstract
    */
   async sync() {
@@ -56,64 +26,63 @@ export class Node extends Solo {
 
   /**
    * Constructs a new Node instance.
-   * Initializes its internal Ensemble of Sprites and sets up
-   * periodic refresh tasks (token and/or configuration).
    *
-   * @param {object} [opts={}] - Node configuration.
-   * @param {{ url: string, beat: number }} [opts.token] - Token refresh settings.
-   * @param {{ url: string, beat: number }} [opts.self] - Self-configuration refresh settings.
+   * The Node starts with a minimal bootstrap `user` object, containing
+   * only the endpoints required to refresh its token and full configuration.
+   *
+   * The Node does **not** immediately call `sync()` — it waits until
+   * the first successful `refresh()` cycle, when complete user data becomes available.
+   *
+   * @param {object} user - Minimal bootstrap information for this Node.
+   * @throws {Error} If minimal configuration is missing.
    */
-  constructor(user, opts = {}) {
+  constructor(user = {}) {
     super();
     this.user = user;
-    this.opts = opts;
     this.add("sprites", new Ensemble());
 
-    // Periodic token refresh
-    if (this.opts.token?.url && this.opts.token?.beat) {
-      const tokenRefresher = AsyncWhat.as(this.refreshToken.bind(this))
-        .self(2000)
-        .else(err => this.notify("error", err));
+    const opts = this.opts;
+    this.#validateBootstrap(opts);
 
-      this.ostinato("refreshToken", tokenRefresher, Infinity, this.opts.token.beat, 1);
-    }
+    // ───────────────────────────
+    // 🔑 Token refresher
+    // ───────────────────────────
+    const tokenRefresher = AsyncWhat.as(this.refreshToken.bind(this))
+      .self(2000)
+      .else(err => this.notify("error", err));
 
-    // Periodic configuration refresh
-    if (this.opts.self?.url && this.opts.self?.beat) {
-      const refresher = AsyncWhat.as(this.refresh.bind(this))
-        .self(2000)
-        .else(err => this.notify("error", err));
+    this.ostinato("refreshToken", tokenRefresher, Infinity, opts.token.beat, 1);
 
-      this.ostinato("refresh", refresher, Infinity, this.opts.self.beat, 1);
-    }
+    // ───────────────────────────
+    // ⚙️ Self refresher
+    // ───────────────────────────
+    const selfRefresher = AsyncWhat.as(this.refresh.bind(this))
+      .self(2000)
+      .else(err => this.notify("error", err));
+
+    this.ostinato("refresh", selfRefresher, Infinity, opts.self.beat, 1);
+
   }
 
-  /**
-   * Returns the Ensemble of Sprites managed by this Node.
-   * @returns {Ensemble}
-   */
+  /** Shortcut to the Node’s configuration options. */
+  get opts() {
+    return this.user?.node?.opts ?? {};
+  }
+
+  /** Returns the Ensemble of Sprites managed by this Node. */
   get sprites() {
     return this.get("sprites");
   }
 
-  // ────────────────────────────────────────────────
+  // ───────────────────────────
   // 🔑 Token Handling
-  // ────────────────────────────────────────────────
+  // ───────────────────────────
 
-  /**
-   * Periodically refreshes the authentication token from the configured endpoint.
-   * @returns {Promise<void>}
-   */
   async refreshToken() {
     const token = await this.fetchToken();
     this.token = token;
   }
 
-  /**
-   * Fetches a new authentication token.
-   * @returns {Promise<string>}
-   * @throws {Error} If the HTTP request fails.
-   */
   async fetchToken() {
     const res = await fetch(this.opts.token.url);
     if (!res.ok)
@@ -121,37 +90,51 @@ export class Node extends Solo {
     return res.text();
   }
 
-  // ────────────────────────────────────────────────
+  // ───────────────────────────
   // ⚙️ Configuration Refresh
-  // ────────────────────────────────────────────────
+  // ───────────────────────────
 
-  /**
-   * Refreshes the Node’s configuration (`this.opts`) and triggers re-synchronization.
-   * @returns {Promise<void>}
-   */
   async refresh() {
-    await this.refreshOpts();
+    await this.refreshUser();
     await this.sync();
   }
 
-  /**
-   * Retrieves the latest configuration from `this.opts.self.url`.
-   * @returns {Promise<void>}
-   */
-  async refreshOpts() {
-    const opts = await this.fetchOpts();
-    this.opts = opts;
+  async refreshUser() {
+    const newUser = await this.fetchUser();
+    this.user = newUser; // replace with latest user info
   }
 
-  /**
-   * Fetches the Node’s configuration JSON from the self URL.
-   * @returns {Promise<object>}
-   * @throws {Error} If the HTTP request fails.
-   */
-  async fetchOpts() {
+  async fetchUser() {
     const res = await fetch(this.opts.self.url);
     if (!res.ok)
-      throw new Error(`Opts fetch failed: HTTP ${res.status} ${res.statusText}`);
+      throw new Error(`User fetch failed: HTTP ${res.status} ${res.statusText}`);
     return res.json();
+  }
+
+  // ───────────────────────────
+  // 🔍 Validation Helpers
+  // ───────────────────────────
+
+  /**
+   * Ensures the node has the minimal configuration required to operate.
+   * Throws a clear error if any required property is missing.
+   * @private
+   */
+  #validateBootstrap(opts) {
+    const missing = [];
+
+    if (!opts?.token?.url) missing.push("opts.token.url");
+    if (!opts?.token?.beat) missing.push("opts.token.beat");
+    if (!opts?.self?.url) missing.push("opts.self.url");
+    if (!opts?.self?.beat) missing.push("opts.self.beat");
+
+    if (missing.length > 0) {
+      throw new Error(
+        `Invalid Node bootstrap: missing ${missing.join(", ")}.\n` +
+        `A Node must include at least:\n` +
+        `  user.node.opts.token = { url, beat }\n` +
+        `  user.node.opts.self  = { url, beat }`
+      );
+    }
   }
 }
