@@ -30,7 +30,13 @@
     
         <h2><span class="attribs"><span class="type-signature"></span></span>Gaia<span class="signature">()</span><span class="type-signature"></span></h2>
         
-            <div class="class-description"><p>Collects information from each sprites into a unitary whole network state</p></div>
+            <div class="class-description"><p>Collects information from each sprites into a unitary whole network state composed by:</p>
+<ul>
+<li>users (Record&lt;string, obj&gt;) mapping user ids with payload (e.g. machines list)</li>
+<li>sprites (Record&lt;string, obj&gt;) mapping spriteId with payload (e.g. long, lat coordinates)</li>
+<li>vibes (Record&lt;string, Array<string>&gt;) mapping spriteId with target sprite ids</li>
+</ul>
+<p>Each sprite id is composed by userId:spriteName</p></div>
         
     
 </header>
@@ -209,6 +215,63 @@
 
 <div class="description">
     <p>Enpoints for http requests</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="users"><span class="type-signature"></span>users<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Object associating each user id to a payload</p>
 </div>
 
 
@@ -492,7 +555,7 @@
     
 
     
-    <h4 class="name" id="img"><span class="type-signature"></span>img<span class="signature">(center<span class="signature-attributes">opt</span>, radius<span class="signature-attributes">opt</span>, sample<span class="signature-attributes">opt</span>, requireUrl<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id="img"><span class="type-signature"></span>img<span class="signature">(center<span class="signature-attributes">opt</span>, radius<span class="signature-attributes">opt</span>, sample<span class="signature-attributes">opt</span>, requireUrl<span class="signature-attributes">opt</span>, targets<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -515,6 +578,9 @@ so the actual number of unique sprites may be slightly smaller than requested.</
 <li>By default, all sprites are included (both servers and clients).
 Set <code>requireUrl = true</code> to restrict the snapshot to only <strong>server-type sprites</strong>
 (those exposing a <code>payload.url</code> property).</li>
+<li>You can further restrict the result by providing an array of <code>targets</code>
+(either Sprite IDs or user IDs).<br>
+Only sprites having at least one outgoing vibe toward those targets are included.</li>
 </ul>
 <hr>
 </div>
@@ -707,6 +773,43 @@ Set <code>requireUrl = true</code> to restrict the snapshot to only <strong>serv
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>targets</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Optional list of target Sprite IDs or user IDs to restrict the selection.</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -796,9 +899,9 @@ Set <code>requireUrl = true</code> to restrict the snapshot to only <strong>serv
     
     <pre class="prettyprint"><code>// Get all sprites within 5km of a given locationconst snapshot = gaia.img([12.4924, 41.8902], 5000);</code></pre>
 
-    <pre class="prettyprint"><code>// Get a random sample of up to 100 server-only sprites (requireUrl = true)const snapshot = gaia.img(undefined, Infinity, 100, true);</code></pre>
+    <pre class="prettyprint"><code>// Get up to 100 server-only spritesconst snapshot = gaia.img(undefined, Infinity, 100, true);</code></pre>
 
-    <pre class="prettyprint"><code>// Full state dump (all sprites, clients + servers)const snapshot = gaia.img();</code></pre>
+    <pre class="prettyprint"><code>// Only sprites connected to aliceconst snapshot = gaia.img(undefined, Infinity, Infinity, false, ["alice"]);</code></pre>
 
 
 
@@ -816,8 +919,8 @@ Set <code>requireUrl = true</code> to restrict the snapshot to only <strong>serv
 
 
 <div class="description">
-    <p>Adds the client info (from the body) to this.img
-Sends to the client the requested, updated, image</p>
+    <p>Adds client info (from the request body) to Gaia’s current image
+and responds with an updated, filtered snapshot.</p>
 </div>
 
 
@@ -869,7 +972,7 @@ Sends to the client the requested, updated, image</p>
 
             
 
-            <td class="description last"><p>argument</p></td>
+            <td class="description last"><p>Request context</p></td>
         </tr>
 
     
@@ -1120,7 +1223,7 @@ Each point is represented as an array <code>[longitude, latitude]</code> in degr
     
 
     
-    <h4 class="name" id=".imgQuery"><span class="type-signature">(static) </span>imgQuery<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".imgQuery"><span class="type-signature">(static) </span>imgQuery<span class="signature">(coords, radius, sample, requireUrl, &hellip;targets)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
 
     
@@ -1129,7 +1232,7 @@ Each point is represented as an array <code>[longitude, latitude]</code> in degr
 
 <div class="description">
     <p>Returns the query string for a Gaia image request.</p>
-<p>Example: &quot;long=12.34&amp;lat=45.67&amp;radius=1000&amp;sample=50&quot;</p>
+<p>Example: &quot;long=12.34&amp;lat=45.67&amp;radius=1000&amp;sample=50&amp;requireUrl=true&amp;targets=alice,main&quot;</p>
 </div>
 
 
@@ -1138,6 +1241,191 @@ Each point is represented as an array <code>[longitude, latitude]</code> in degr
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>coords</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>[longitude, latitude]</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>radius</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Optional radius in meters</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sample</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Optional sample size</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>requireUrl</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Optional filter for server-only sprites</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>targets</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Optional list of target IDs</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -1193,6 +1481,28 @@ Each point is represented as an array <code>[longitude, latitude]</code> in degr
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Encoded query string</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1537,7 +1847,7 @@ The result is returned as an Each iterable of <code>[id, payload]</code> pairs.<
     
 
     
-    <h4 class="name" id=".update"><span class="type-signature">(static) </span>update<span class="signature">(param0)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".update"><span class="type-signature">(static) </span>update<span class="signature">(data)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1545,8 +1855,10 @@ The result is returned as an Each iterable of <code>[id, payload]</code> pairs.<
 
 
 <div class="description">
-    <p>Merges the provided img data into the current Gaia img.
-Existing sprites and vibes are updated or extended in place.</p>
+    <p>Merges the provided image data into the current Gaia image.</p>
+<p>Existing users, sprites, and vibes are updated or extended <strong>in place</strong>.
+Shallow merging ensures that existing objects retain their references,
+allowing live views of Gaia’s state to stay consistent.</p>
 </div>
 
 
@@ -1582,7 +1894,7 @@ Existing sprites and vibes are updated or extended in place.</p>
 
         <tr>
             
-                <td class="name"><code>param0</code></td>
+                <td class="name"><code>data</code></td>
             
 
             <td class="type">
@@ -1598,7 +1910,7 @@ Existing sprites and vibes are updated or extended in place.</p>
 
             
 
-            <td class="description last"><p>The new image data.</p></td>
+            <td class="description last"><p>The new image data to merge.</p></td>
         </tr>
 
     
@@ -1686,7 +1998,7 @@ Existing sprites and vibes are updated or extended in place.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Oct 15 2025 16:45:57 GMT+0200 (Ora legale dell’Europa centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Oct 17 2025 13:12:19 GMT+0200 (Ora legale dell’Europa centrale)
 </footer>
 
 <script> prettyPrint(); </script>

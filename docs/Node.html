@@ -34,24 +34,26 @@
 <p>Represents a participant in the distributed computation network.</p>
 <p>A Node can <strong>request</strong>, <strong>transport</strong>, or <strong>execute</strong> computations.
 These roles are realized through one or more attached <a href="Sprite.html">Sprite</a> instances.</p>
-<p>Internally, the Node is a Solo containing an Ensemble of Sprites.
-This allows it to manage multiple specialized Sprites that cooperate
-in distributed workflows.</p>
+<p>Internally, a Node is a Solo containing an Ensemble of Sprites,
+allowing it to manage multiple specialized Sprites that cooperate in distributed workflows.</p>
 <hr>
 <p>🧩 <strong>Structure</strong></p>
 <ul>
 <li><code>this.sprites</code> — An Ensemble containing all Sprites managed by this Node.</li>
-<li><code>this.opts</code> — Optional configuration object, may include a token refresh policy.</li>
+<li><code>this.opts</code> — The configuration object. It may define token and self-refresh policies.</li>
 </ul>
 <hr>
-<p>🌐 <strong>Behavior</strong></p>
+<p>⚙️ <strong>Dynamic Behavior</strong></p>
 <ul>
-<li>A Node may host multiple Sprites, each acting as an autonomous agent or worker.</li>
-<li>If <code>opts.token</code> is provided (with <code>{ url, beat }</code>), the Node periodically
-refreshes an authentication token from the given URL.</li>
-<li>Sprites and their Auras may then use this token to authenticate with
-network services (e.g., GaiaAura) for topology discovery or coordination.</li>
+<li>Periodically refreshes an authentication token (if <code>opts.token</code> provides <code>{ url, beat }</code>).
+This token can then be used by Sprites and their Auras for authenticated operations
+(e.g., Gaia topology discovery).</li>
+<li>Periodically refreshes its configuration (<code>opts.self</code> with <code>{ url, beat }</code>),
+then invokes its subclass-defined sync method to reconfigure internal structure.</li>
 </ul>
+<p>Subclasses implement their own <code>sync()</code> method to reconcile the Node’s state
+with the latest configuration (<code>this.opts</code>), which may include updates
+to its Sprites, Auras, or network topology.</p>
 <hr></div>
         
     
@@ -76,8 +78,8 @@ network services (e.g., GaiaAura) for topology discovery or coordination.</li>
 
 <div class="description">
     <p>Constructs a new Node instance.
-Initializes its internal Ensemble of Sprites and, if configured,
-starts periodic token refresh.</p>
+Initializes its internal Ensemble of Sprites and sets up
+periodic refresh tasks (token and/or configuration).</p>
 </div>
 
 
@@ -104,6 +106,8 @@ starts periodic token refresh.</p>
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -140,8 +144,14 @@ starts periodic token refresh.</p>
             
 
             
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
 
-            <td class="description last"><p>Optional configuration.</p>
+            <td class="description last"><p>Node configuration.</p>
                 <h6>Properties</h6>
                 
 
@@ -195,7 +205,40 @@ starts periodic token refresh.</p>
 
             
 
-            <td class="description last"><p>Token refresh configuration.</p></td>
+            <td class="description last"><p>Token refresh settings.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>self</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Self-configuration refresh settings.</p></td>
         </tr>
 
     
@@ -269,7 +312,7 @@ starts periodic token refresh.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Create a Node with multiple Spritesconst node = new Node({ token: { url: "https://auth.local/token", beat: 30000 } });node.sprites.add("main", new Sprite("alice:main"));node.sprites.add("worker", new Sprite("alice:worker"));console.log(node.sprites.keys()); // → ["main", "worker"]</code></pre>
+    <pre class="prettyprint"><code>// Create a Node that periodically refreshes its token and configurationconst node = new Node({  token: { url: "https://auth.local/token", beat: 30_000 },  self: { url: "https://config.local/node.json", beat: 60_000 },});node.sprites.add("main", new Sprite("alice:main"));node.sprites.add("worker", new Sprite("alice:worker"));console.log(node.sprites.keys()); // → ["main", "worker"]</code></pre>
 
 
 
@@ -367,7 +410,7 @@ starts periodic token refresh.</p>
     
 
     
-    <h4 class="name" id="fetchToken"><span class="type-signature">(async) </span>fetchToken<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;string>}</span></h4>
+    <h4 class="name" id="fetchOpts"><span class="type-signature">(async) </span>fetchOpts<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;object>}</span></h4>
     
 
     
@@ -375,7 +418,7 @@ starts periodic token refresh.</p>
 
 
 <div class="description">
-    <p>Fetches a fresh token from the configured endpoint.</p>
+    <p>Fetches the Node’s configuration JSON from the self URL.</p>
 </div>
 
 
@@ -471,10 +514,136 @@ starts periodic token refresh.</p>
 <h5>Returns:</h5>
 
         
-<div class="param-desc">
-    <p>The retrieved token string.</p>
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;object></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="fetchToken"><span class="type-signature">(async) </span>fetchToken<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;string>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Fetches a new authentication token.</p>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <p>If the HTTP request fails.</p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">Error</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
@@ -501,6 +670,208 @@ starts periodic token refresh.</p>
     
 
     
+    <h4 class="name" id="refresh"><span class="type-signature">(async) </span>refresh<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Refreshes the Node’s configuration (<code>this.opts</code>) and triggers re-synchronization.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="refreshOpts"><span class="type-signature">(async) </span>refreshOpts<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Retrieves the latest configuration from <code>this.opts.self.url</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="refreshToken"><span class="type-signature">(async) </span>refreshToken<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
     
 
@@ -509,8 +880,109 @@ starts periodic token refresh.</p>
 
 
 <div class="description">
-    <p>Periodically refreshes the authentication token from the configured URL.
-The token is stored as <code>this.token</code>.</p>
+    <p>Periodically refreshes the authentication token from the configured endpoint.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="sync"><span class="type-signature">(async, abstract) </span>sync<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Synchronizes this Node’s structure with the current configuration (<code>this.opts</code>).
+Must be implemented by subclasses.</p>
 </div>
 
 
@@ -619,7 +1091,7 @@ The token is stored as <code>this.token</code>.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Oct 15 2025 16:45:57 GMT+0200 (Ora legale dell’Europa centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Oct 17 2025 13:12:19 GMT+0200 (Ora legale dell’Europa centrale)
 </footer>
 
 <script> prettyPrint(); </script>

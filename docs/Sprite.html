@@ -1154,7 +1154,7 @@ The Vibe must satisfy this predicate to be used.</p></td>
     
 
     
-    <h4 class="name" id=".id"><span class="type-signature">(static) </span>id<span class="signature">(owner, name)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id=".id"><span class="type-signature">(static) </span>id<span class="signature">(user, name)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
 
     
@@ -1163,12 +1163,12 @@ The Vibe must satisfy this predicate to be used.</p></td>
 
 <div class="description">
     <p>🆔 <strong>Generates a unique Sprite identifier.</strong></p>
-<p>Each Sprite belongs to an owner. The Sprite’s identifier encodes both the
-owner and its local name using the format:</p>
-<pre class="prettyprint source lang-text"><code>&lt;owner>:&lt;name>
+<p>Each Sprite belongs to a user. The Sprite’s identifier encodes both the
+user and its local name using the format:</p>
+<pre class="prettyprint source lang-text"><code>&lt;user>:&lt;name>
 </code></pre>
-<p>This makes Sprite IDs globally unique within the distributed network.
-Sprite options are typically stored within the owner's user database.</p>
+<p>This ensures Sprite IDs are globally unique within the distributed network.
+Sprite configuration and metadata are typically stored in the user’s database.</p>
 </div>
 
 
@@ -1204,7 +1204,7 @@ Sprite options are typically stored within the owner's user database.</p>
 
         <tr>
             
-                <td class="name"><code>owner</code></td>
+                <td class="name"><code>user</code></td>
             
 
             <td class="type">
@@ -1220,7 +1220,7 @@ Sprite options are typically stored within the owner's user database.</p>
 
             
 
-            <td class="description last"><p>The owner of the Sprite (usually a user ID).</p></td>
+            <td class="description last"><p>The owner or user ID of the Sprite.</p></td>
         </tr>
 
     
@@ -1243,7 +1243,7 @@ Sprite options are typically stored within the owner's user database.</p>
 
             
 
-            <td class="description last"><p>The Sprite’s local name or role under the owner.</p></td>
+            <td class="description last"><p>The Sprite’s local name or role under the user.</p></td>
         </tr>
 
     
@@ -1342,6 +1342,180 @@ Sprite options are typically stored within the owner's user database.</p>
     
 
     
+    <h4 class="name" id=".isConnectedTo"><span class="type-signature">(static) </span>isConnectedTo<span class="signature">(trgId)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>🔗 <strong>Checks if this Sprite is connected to a given target.</strong></p>
+<p>The target ID (<code>trgId</code>) may represent either:</p>
+<ul>
+<li>a full Sprite ID (<code>&quot;user:name&quot;</code>)</li>
+<li>or just a user ID (<code>&quot;user&quot;</code>)</li>
+</ul>
+<p>The method iterates over all active Vibes and returns <code>true</code> if:</p>
+<ul>
+<li>any connected Vibe belongs to the same user as <code>trgId</code>, and</li>
+<li>either:
+<ul>
+<li><code>trgId</code> has no name part (user-level connection), or</li>
+<li>the Vibe’s Sprite name matches <code>trgName</code>.</li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>trgId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The target Sprite or user identifier.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Whether this Sprite is connected to the given target.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>sprite.isConnectedTo("alice");        // true if any vibe belongs to Alicesprite.isConnectedTo("alice:worker"); // true if connected specifically to Alice's worker Sprite</code></pre>
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id=".parseId"><span class="type-signature">(static) </span>parseId<span class="signature">(id)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
@@ -1351,8 +1525,8 @@ Sprite options are typically stored within the owner's user database.</p>
 
 <div class="description">
     <p>🧩 <strong>Parses a Sprite ID into its components.</strong></p>
-<p>Given a Sprite identifier in the <code>&lt;owner&gt;:&lt;name&gt;</code> format,
-returns an object with separate <code>owner</code> and <code>name</code> fields.</p>
+<p>Given a Sprite identifier in the <code>&lt;user&gt;:&lt;name&gt;</code> format,
+returns an object with separate <code>user</code> and <code>name</code> fields.</p>
 </div>
 
 
@@ -1469,7 +1643,7 @@ returns an object with separate <code>owner</code> and <code>name</code> fields.
 
         
 <div class="param-desc">
-    <p>Object containing the parsed <code>owner</code> and <code>name</code>.</p>
+    <p>An object containing the parsed <code>user</code> and <code>name</code>.</p>
 </div>
 
 
@@ -1493,7 +1667,7 @@ returns an object with separate <code>owner</code> and <code>name</code> fields.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>const parsed = Sprite.parseId("alice:chatbot");console.log(parsed); // { owner: "alice", name: "chatbot" }</code></pre>
+    <pre class="prettyprint"><code>const parsed = Sprite.parseId("alice:chatbot");console.log(parsed); // { user: "alice", name: "chatbot" }</code></pre>
 
 
 
@@ -1519,7 +1693,7 @@ returns an object with separate <code>owner</code> and <code>name</code> fields.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Oct 15 2025 16:45:57 GMT+0200 (Ora legale dell’Europa centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Oct 17 2025 13:12:19 GMT+0200 (Ora legale dell’Europa centrale)
 </footer>
 
 <script> prettyPrint(); </script>

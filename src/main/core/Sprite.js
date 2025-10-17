@@ -178,46 +178,79 @@ export class Sprite extends Solo {
   /**
    * 🆔 **Generates a unique Sprite identifier.**
    *
-   * Each Sprite belongs to an owner. The Sprite’s identifier encodes both the
-   * owner and its local name using the format:
+   * Each Sprite belongs to a user. The Sprite’s identifier encodes both the
+   * user and its local name using the format:
    *
    * ```text
-   * <owner>:<name>
+   * <user>:<name>
    * ```
    *
-   * This makes Sprite IDs globally unique within the distributed network.
-   * Sprite options are typically stored within the owner's user database.
+   * This ensures Sprite IDs are globally unique within the distributed network.
+   * Sprite configuration and metadata are typically stored in the user’s database.
    *
-   * @param {*} owner - The owner of the Sprite (usually a user ID).
-   * @param {*} name - The Sprite’s local name or role under the owner.
+   * @param {*} user - The owner or user ID of the Sprite.
+   * @param {*} name - The Sprite’s local name or role under the user.
    * @returns {string} The encoded Sprite ID, e.g. `"alice:chatbot"`.
    *
    * @example
    * const id = Sprite.id("alice", "chatbot");
    * console.log(id); // "alice:chatbot"
    */
-  static id(owner, name) {
-    return `${owner}:${name}`;
+  static id(user, name) {
+    return `${user}:${name}`;
   }
 
   /**
    * 🧩 **Parses a Sprite ID into its components.**
    *
-   * Given a Sprite identifier in the `<owner>:<name>` format,
-   * returns an object with separate `owner` and `name` fields.
+   * Given a Sprite identifier in the `<user>:<name>` format,
+   * returns an object with separate `user` and `name` fields.
    *
    * @param {string} id - The Sprite identifier to parse.
-   * @returns {{ owner: string, name: string }} 
-   *          Object containing the parsed `owner` and `name`.
+   * @returns {{ user: string, name: (string|undefined) }}
+   *          An object containing the parsed `user` and `name`.
    *
    * @example
    * const parsed = Sprite.parseId("alice:chatbot");
-   * console.log(parsed); // { owner: "alice", name: "chatbot" }
+   * console.log(parsed); // { user: "alice", name: "chatbot" }
    */
   static parseId(id) {
-    const split = id.split(":");
-    return { owner: split[0], name: split[1] };
+    const [user, name] = id.split(":");
+    return { user, name };
   }
+
+  /**
+   * 🔗 **Checks if this Sprite is connected to a given target.**
+   *
+   * The target ID (`trgId`) may represent either:
+   * - a full Sprite ID (`"user:name"`)
+   * - or just a user ID (`"user"`)
+   *
+   * The method iterates over all active Vibes and returns `true` if:
+   * - any connected Vibe belongs to the same user as `trgId`, and
+   * - either:
+   *   - `trgId` has no name part (user-level connection), or
+   *   - the Vibe’s Sprite name matches `trgName`.
+   *
+   * @param {string} trgId - The target Sprite or user identifier.
+   * @returns {boolean} Whether this Sprite is connected to the given target.
+   *
+   * @example
+   * sprite.isConnectedTo("alice");        // true if any vibe belongs to Alice
+   * sprite.isConnectedTo("alice:worker"); // true if connected specifically to Alice's worker Sprite
+   */
+  static isConnectedTo(srcId, trgId) {
+    const { user: trgUser, name: trgName } = Sprite.parseId(trgId);
+
+    for (const vibe of this.vibes.players) {
+      const { user, name } = Sprite.parseId(vibe.name);
+      if (trgUser !== user) continue;
+      if (!trgName || trgName === name) return true;
+    }
+
+    return false;
+  }
+
 
 
 
