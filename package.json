@@ -1,22 +1,30 @@
 {
-  "name": "@fizzwiz/gaia",
+  "name": "@fizzwiz/vanilla",
   "version": "0.0.0-0",
-  "description": "Self-organizing networks of intelligent nodes. — A lightweight library to build adaptive, emergent networks where each node autonomously optimizes its connections, forming a living, distributed connectome.",
+  "description": "Tiny, semantic utilities for working with plain JSON objects",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fizzwiz/gaia.git"
+    "url": "https://github.com/fizzwiz/vanilla.git"
   },
   "keywords": [
+    "json",
+    "object",
+    "store",
+    "optionstore",
+    "objnavigator",
+    "vanilla",
+    "plain-object",
+    "nested-data"
   ],
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "license": "MIT",
   "author": "Roberto Venditti <err3vi@gmail.com>",
   "files": [
     "README.md",
     "src/main/",
-    "dist/gaia.bundle.js"
+    "dist/vanilla.bundle.js"
   ],
   "type": "module",
   "main": "./src/main/index.js",
@@ -31,19 +39,15 @@
     "prepublishOnly": "npm run doc && npm run build && npm test"
   },
   "bugs": {
-    "url": "https://github.com/fizzwiz/gaia/issues"
+    "url": "https://github.com/fizzwiz/vanilla/issues"
   },
-  "homepage": "https://github.com/fizzwiz/gaia#readme",
+  "homepage": "https://github.com/fizzwiz/vanilla#readme",
   "directories": {
     "doc": "docs",
     "test": "src/test"
   },
   "sideEffects": false,
   "dependencies": {
-    "@fizzwiz/fluent": "github:fizzwiz/fluent",  
-    "@fizzwiz/sorted": "github:fizzwiz/sorted",    
-    "@fizzwiz/ensemble": "github:fizzwiz/ensemble",
-    "@fizzwiz/awaitility": "github:fizzwiz/awaitility"
   },
   "devDependencies": {
     "@babel/cli": "^7.22.5",
@@ -51,9 +55,7 @@
     "@babel/preset-env": "^7.22.5",
     "assert": "2.0.0",
     "babel-loader": "^9.1.2",
-    "eslint": "^8.56.0",
     "mocha": "^10.2.0",
-    "supertest": "^7.1.3",
     "webpack": "^5.88.0",
     "webpack-cli": "^5.1.4"
   }

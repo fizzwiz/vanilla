@@ -1,40 +1,36 @@
-# 🌟 Welcome to the `@fizzwiz/sorted` Blog  
-> **“Sorting is solving.”**
+# Welcome to the 🍦 `@fizzwiz/vanilla` Blog
+> **“Plain, simple, structured.”**
 
-Welcome to your go-to source for mastering the `@fizzwiz/sorted` library — where elegant order meets practical power.  
-Here, we blend **deep ideas** with **hands-on examples** to show how sorted collections can unlock cleaner, smarter code.
-
----
-
-## 🔍 What You’ll Discover
-
-- 🧠 **Deep Dives** – uncover the design patterns, abstractions, and reasoning that shape the library.
-- 🧪 **Practical Walkthroughs** – follow real-world use cases and examples to see `sorted` in action.
-- 🚀 **Changelogs with Context** – get detailed, human-readable updates with each new release.
+Welcome to the official blog for `@fizzwiz/vanilla` — your source for lightweight, semantic helpers for working with plain JSON objects.  
+Here, we explore **practical tips**, **real-world examples**, and **best practices** for managing nested data and type-based options in a clean, consistent way.
 
 ---
 
-## 🤝 Who This Blog is For
+## What You’ll Discover
 
-This blog is made for:
-- Developers exploring the power of sorted data structures,
-- Contributors tracking the library’s evolution,
-- Or anyone who appreciates well-structured, expressive code.
-
-If you’re curious, thoughtful, and love solving problems — you’ll feel right at home.
+- **Guides & Tutorials** – step-by-step examples showing `ObjNavigator` and `OptionStore` in action.
+- **Design Insights** – understand the philosophy and reasoning behind the library’s simplicity.
+- **Release Notes & Updates** – keep track of new features, improvements, and bug fixes.
 
 ---
 
-## 📌 Stay Updated
+## Who This Blog is For
 
-Fresh posts bring fresh ideas — and every release is paired with clear, contextual updates.
+This blog is intended for:
 
-👉 **Subscribe via [RSS](https://sorted-js.blogspot.com/feeds/posts/default)**  
-Or simply bookmark us and check back often.
+- Developers who work with JSON-like data structures.
+- Contributors and library enthusiasts following updates.
+- Anyone who appreciates clean, minimal, and reusable abstractions.
+
+If you value clarity, simplicity, and structured data, you’ll feel right at home.
 
 ---
 
-<br>  
+## Stay Updated
 
-> *“Happy Sorting!”*  
-> — `@fizzwiz ✨`
+Subscribe or bookmark to catch the latest guides, examples, and library updates.
+
+---
+
+> *“Keep it plain, keep it structured.”*  
+> — `@fizzwiz`

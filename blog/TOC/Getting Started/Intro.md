@@ -1,50 +1,27 @@
-# 🏠 Introduction to `@fizzwiz/sorted`
+# Introduction to 🍦 `@fizzwiz/vanilla`
 
-This library introduces **Sorted Collections** and a powerful **representation-based** approach to equivalence among collected objects.
+`@fizzwiz/vanilla` is a lightweight library that provides semantic helpers for working with **plain JSON objects**.
 
----
+A vanilla object is **simple, serializable, and flexible**. This library allows you to manage nested data structures and type-based options safely and consistently, without introducing complex classes or frameworks.
 
-## 📌 A Familiar Problem
+## Core Concepts
 
-The importance of sorted collections is often underestimated. JavaScript, for example, doesn’t provide them out of the box.  
-Yet sorting objects is key — both in advanced problem solving and everyday computations.
+### OptionStore
 
----
+* Stores options keyed by type names (e.g., class names or string identifiers).
+* Retrieves options for instances by walking up the prototype chain.
+* Ideal for defining default configurations or behaviors per type hierarchy.
 
-## 🎯 The Search-and-Select Pattern
+### ObjNavigator
 
-Sorting candidate solutions naturally leads to a unifying concept we call the **Search-and-Select Pattern** — a powerful strategy for solving a wide range of **optimization problems**.
+* Navigate, get, and set nested values in JSON-like objects using dot-separated paths or arrays.
+* Automatically creates missing intermediate objects when needed.
+* Supports scoped navigation with `within()` and returning to parent objects with `without()`.
 
-In this pattern:
+## Philosophy
 
-- A **search space** is modeled by the `What` class.
-- A **search** is expressed as an iteration via the `Each` class.  
-  (Both `Each` and `What` come from the companion library [`@fizzwiz/fluent`](https://fluent-js.blogspot.com))
-- A **priority queue** manages the order of exploration.
+* **Simplicity:** Work with plain objects without introducing complex classes.
+* **Safety:** Avoid runtime errors when navigating nested structures.
+* **Flexibility:** Easily integrate with existing JSON data or API payloads.
 
-We’ll explore this pattern more deeply in future articles — see, for instance:  
-👉 [The Search-and-Select Pattern](https://blog.fizzwiz.cloud/2025/06/search-and-select-pattern.html)
-
----
-
-## 🧠 A Library That Matches Your Thinking
-
-While designed with powerful patterns in mind, `Queue`s in this library are useful even outside of that context.  
-They offer a **fluent, natural syntax** for expressing complex logic with:
-
-- Well-defined queues  
-- Custom equivalence among objects
-
----
-
-## 📝 Documentation and More
-
-- 📘 Auto-generated API reference: [GitHub Pages](https://fizzwiz.github.io/sorted)  
-- 📚 Conceptual walkthroughs and real-world examples: _Right here on this blog._
-
----
-<br> 
-  
-> *“Sorting is Solving.”*  
-> — `@fizzwiz ✨`
-
+By providing these two core helpers, `@fizzwiz/vanilla` brings structure and semantic meaning to vanilla objects while keeping your data fully JSON-compatible.

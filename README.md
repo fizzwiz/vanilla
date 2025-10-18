@@ -1,25 +1,37 @@
-# @virtuality-is/gaia
+# 🍦 @fizzwiz/vanilla
 
-**Self-organizing networks of living nodes**
+**Lightweight semantics for working with plain JSON objects**
 
-Gaia is a lightweight library for building **adaptive, emergent networks** where each Sprite autonomously optimizes its connections, forming a **living, distributed system**.
+`@fizzwiz/vanilla` is a small library that provides **semantic helpers** for working with JSON-compatible objects. A vanilla object is plain and serializable — no special class is required. The library adds meaningful abstractions for storing options and navigating/manipulating nested data safely and consistently.
 
 ---
 
 ## Features
 
-- **Sprites (Autonomous Nodes):** Each Sprite independently maintains its state and connectivity.
-- **Neighborhood Convergence:** Sprites continuously optimize connections with the most valuable peers.
-- **Event-Driven Architecture:** Integrates reactive cues and repeating tasks for dynamic behavior.
-- **Vibes (Connections):** Sprites communicate through subtle, living links.
-- **Gaia (Global Hub):** Aggregates network information and orchestrates the system.
+* **OptionStore:** Store and retrieve options by type, with automatic lookup along an instance's prototype chain.
+* **ObjNavigator:** Navigate and manipulate nested objects by paths in a JSON-like object, with optional creation of intermediate objects.
 
 ---
 
 ## Installation
 
+### NPM
+
 ```bash
-npm install @virtuality-is/gaia
+npm install @fizzwiz/vanilla
+```
+
+### Browser (vanilla bundle via jsDelivr)
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@fizzwiz/vanilla/dist/vanilla.bundle.js"></script>
+<script>
+  const { OptionStore, ObjNavigator } = window.fizzwizVanilla;
+
+  const store = ObjNavigator.from({});
+  store.set("user.profile.name", "Alice");
+  console.log(store.get("user.profile.name")); // "Alice"
+</script>
 ```
 
 ---
@@ -27,18 +39,57 @@ npm install @virtuality-is/gaia
 ## Quick Start
 
 ```javascript
+import { OptionStore, ObjNavigator } from '@fizzwiz/vanilla';
 
+// OptionStore example
+class Base {}
+class Derived extends Base {}
+
+const options = OptionStore.as({});
+options.set('Base', 'color', 'blue');
+options.set('Derived', 'color', 'red');
+
+console.log(options.get(new Derived(), 'color')); // 'red'
+console.log(options.get(new Base(), 'color'));    // 'blue'
+
+// ObjNavigator example
+const navigator = ObjNavigator.from({});
+navigator.set('user.profile.name', 'Alice');
+navigator.set('user.profile.age', 30);
+
+// Navigate into a sub-object
+const profileNavigator = navigator.with('user.profile');
+console.log(profileNavigator.get('name')); // 'Alice'
+profileNavigator.set('email', 'alice@example.com');
+console.log(navigator.get('user.profile.email')); // 'alice@example.com'
+
+// Navigate back to parent
+const parentNavigator = profileNavigator.without();
+console.log(parentNavigator === navigator); // true
 ```
 
 ---
 
 ## Documentation
 
-- **Sprite:** Autonomous, self-organizing node.
-- **Vibe:** Connection between Sprites with activity and value tracking.
-- **Ostinato:** Repeating tasks or periodic actions.
-- **Cue:** Event-driven reactive listeners.
-- **Gaia:** The global aggregator and orchestrator of Sprites.
+### OptionStore
+
+* Stores options keyed by type names.
+* Retrieves options for instances by walking up the prototype chain.
+* Useful for defining default behavior or configuration per class hierarchy.
+
+### ObjNavigator
+
+* Stores and retrieves nested values by paths (dot-separated strings or arrays).
+* Automatically creates intermediate objects when using `set()`.
+* Supports scoped navigation with `with()` and returning to the parent with `without()`.
+
+---
+
+## Blog & GitHub Pages
+
+* Blog: [https://fizzwiz-vanilla.blogspot.com](https://fizzwiz-vanilla.blogspot.com)
+* GitHub Pages: [https://fizzwiz.github.io/vanilla](https://fizzwiz.github.io/vanilla)
 
 ---
 

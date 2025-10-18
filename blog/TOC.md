@@ -1,22 +1,22 @@
 # 📚 Table of Contents
 
-Welcome to your comprehensive guide for the `@fizzwiz/pattern` library!  
+Welcome to your comprehensive guide for the 🍦 `@fizzwiz/vanilla` library!
 Whether you're just starting out or exploring advanced abstractions, this guide will help you navigate the documentation and resources with ease.
 
 ---
 
 ## 🚀 Getting Started
 
-- [Welcome](https://pattern-js.blogspot.com/p/welcome.html)  
+* [Welcome](https://fizzwiz-vanilla.blogspot.com/p/welcome.html)
   Overview, audience, and organizational principles behind the library.
 
-- [Quick Start](https://pattern-js.blogspot.com/p/quick-start.html)  
-  How to install and write your first meaningful code with `@fizzwiz/pattern`.
+* [Quick Start](https://fizzwiz-vanilla.blogspot.com/p/quick-start.html)
+  How to install and write your first meaningful code with `@fizzwiz/vanilla`.
 
-- [Introduction](https://pattern-js.blogspot.com/p/intro.html)  
+* [Introduction](https://fizzwiz-vanilla.blogspot.com/p/intro.html)
   The motivation, philosophy, and design goals shaping the library’s architecture.
 
-- [Contribute & Feedback](https://pattern-js.blogspot.com/p/contribute-feedback.html)  
+* [Contribute & Feedback](https://fizzwiz-vanilla.blogspot.com/p/contribute-feedback.html)
   Ways to report issues, suggest improvements, or contribute to the project.
 
 ---
@@ -25,23 +25,18 @@ Whether you're just starting out or exploring advanced abstractions, this guide 
 
 ### 🧬 Core Package: Building Blocks for Abstraction
 
-- ⚡ [Run Interface](https://pattern-js.blogspot.com/p/run-interface.html)  
-  Encapsulate focused, executable logic to solve specific problems.
+* [OptionStore Class](https://fizzwiz-vanilla.blogspot.com/p/optionstore-class.html)
+  Store and retrieve options by type, supporting prototype chain lookup.
 
-- 🧠 [Search Class](https://pattern-js.blogspot.com/p/search-class.html)  
-  Define a structured exploration of candidate solutions guiding refinement.
-
-- 🧹 [Chore Class](https://pattern-js.blogspot.com/p/Chore-class.html)  
-  Manage event-driven processes that sense and react like a human service.
-
-- 📣 [RoamingCall Class](https://pattern-js.blogspot.com/p/roamingcall-class.html)  
-  Invoke distributed operations that transcend boundaries and systems.
+* [ObjNavigator Class](https://fizzwiz-vanilla.blogspot.com/p/objnavigator-class.html)
+  Navigate and manipulate nested JSON objects safely and intuitively.
 
 ---
 
 ## 🧠 Concepts & Patterns
 
-*Coming soon — check back for design principles, idioms, and best practices.*
+* [Clarity Beats Power](https://fizzwiz-vanilla.blogspot.com/p/clarity-beats-power.html)  
+  The guiding principle of `@fizzwiz/vanilla`: favor simple, readable, and maintainable design over unnecessary complexity.
 
 ---
 
@@ -53,12 +48,12 @@ Whether you're just starting out or exploring advanced abstractions, this guide 
 
 ## 📣 Releases & Updates
 
-- [📦 v0.0.0-dev.1 — The First Brick](https://pattern.blog.fizzwiz.cloud/2025/06/v000-dev1-first-brick.html)  
-  Initial pre-release featuring core abstractions and foundational patterns.
+* [📦 v0.0.0-dev.1 — First Brick](https://fizzwiz-vanilla.blogspot.com/p/v000-dev1-first-brick.html)
+  Initial prerelease featuring `OptionStore` and `ObjNavigator`.
 
 ---
 
 > 📌 *This page will be updated regularly — bookmark it to stay current with project developments.*
 
-*"Let's get magic!"*  
+*"Let's build clear and maintainable JSON semantics!"*
 — `@fizzwiz ✨`

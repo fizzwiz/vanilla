@@ -4,8 +4,8 @@ module.exports = {
   entry: path.resolve(__dirname, "src/main/index.js"),
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "gaia.bundle.js",
-    library: "gaia",
+    filename: "store.bundle.js",
+    library: "store",
     libraryTarget: "umd"
   },
   module: {

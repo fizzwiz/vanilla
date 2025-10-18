@@ -1,89 +1,63 @@
-# 🚀 Quick Start Guide: `@fizzwiz/sorted`
+# Quick Start with 🍦 `@fizzwiz/vanilla`
 
-Welcome to `@fizzwiz/sorted` — a modern library of sorted collections for JavaScript.  
-This guide will help you get started in just a few minutes.
+`@fizzwiz/vanilla` provides simple, semantic helpers for working with plain JSON objects. Below are some examples to get you started quickly.
 
 ---
 
-## 📦 Installation
-
-Install with **npm**:
+## Installation
 
 ```bash
-npm install @fizzwiz/sorted
-```
-
-Or with **yarn**:
-
-```bash
-yarn add @fizzwiz/sorted
+npm install @fizzwiz/vanilla
 ```
 
 ---
 
-## 🔁 Basic Sorting
+## OptionStore Example
 
-The `ArrayQueue` class keeps elements sorted by insertion order — behaving like a **FIFO** or **LIFO** queue, depending on configuration:
+Store and retrieve options by type, automatically looking up along an instance's prototype chain.
 
-```js
-import { ArrayQueue } from '@fizzwiz/sorted';
+```javascript
+import { OptionStore } from '@fizzwiz/vanilla';
 
-// LIFO (Last In, First Out)
-const lifo = new ArrayQueue(false).let(1).let(2).let(3);
+class Base {}
+class Derived extends Base {}
 
-const last = lifo.peek(); // → 3
+const options = OptionStore.as({});
+options.set('Base', 'color', 'blue');
+options.set('Derived', 'color', 'red');
+
+console.log(options.get(Derived, 'color')); // 'red'
+console.log(options.get(Base, 'color'));    // 'blue'
 ```
 
 ---
 
-## 🧠 Advanced Equivalence
+## ObjNavigator Example
 
-Use custom equivalence logic via **representation functions**. For example, group strings by their length:
+Navigate and manipulate nested objects using paths.
 
-```js
-import { TrueSet, ORDER } from '@fizzwiz/sorted';
+```javascript
+import { ObjNavigator } from '@fizzwiz/vanilla';
 
-const set = new TrueSet(
-  word => word.length,       // representation function
-  ORDER.ASCENDING, 
-  ORDER.SINGULAR             // enforce uniqueness by representation
-);
+const navigator = new ObjNavigator({});
+navigator.set('user.profile.name', 'Alice');
+navigator.set('user.profile.age', 30);
 
-set.add("what");
-set.add("that"); // → false (same length as "what")
+// Navigate into a sub-object
+const profileNav = navigator.within('user.profile');
+console.log(profileNav.get('name')); // 'Alice'
+profileNav.set('email', 'alice@example.com');
+console.log(navigator.get('user.profile.email')); // 'alice@example.com'
+
+// Navigate back to parent
+const parentNav = profileNav.without();
+console.log(parentNav === navigator); // true
 ```
 
 ---
 
-## 🧪 Composable Logic
+## Notes
 
-`Collection` extends the `Each` concept (see [@fizzwiz/fluent Blog](https://fluent-js.blogspot.com)) — allowing fluent, chainable transformations:
-
-```js
-const lifo = new ArrayQueue(false).let(1).let(2).let(3);
-
-const odds = lifo.which(i => i % 2 === 1);     // → [1, 3]
-const sum = odds.what((a, b) => a + b);        // → 4
-```
-
----
-
-## 📚 Explore More
-
-### ✨ [Intro to the Library](https://sorted-js.blogspot.com/p/Intro.html)
-A conceptual overview of the design philosophy and patterns behind `@fizzwiz/sorted`.
-
-### 📄 [API Reference](https://fizzwiz.github.io/sorted)
-Browse the full, auto-generated documentation.
-
-### 🧾 [GitHub Repository](https://github.com/fizzwiz/sorted)
-View the source, report issues, or contribute to the project.
-
----
-
-## 💬 Need Help?
-
-Questions? Thoughts? Drop a comment on the blog or open a discussion on GitHub.
-
-> “Make your code align with your thoughts.”  
-> — `@fizzwiz ✨`
+* `OptionStore` is useful for per-type configuration.
+* `ObjNavigator` simplifies working with deeply nested objects without manually checking intermediate paths.
+* Both classes work with plain JSON objects, keeping your data serializable and simple.

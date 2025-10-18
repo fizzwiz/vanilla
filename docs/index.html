@@ -43,34 +43,79 @@
 
 
     <section>
-        <article><h1>@virtuality-is/gaia</h1>
-<p><strong>Self-organizing networks of living nodes</strong></p>
-<p>Gaia is a lightweight library for building <strong>adaptive, emergent networks</strong> where each Sprite autonomously optimizes its connections, forming a <strong>living, distributed system</strong>.</p>
+        <article><h1>🍦 @fizzwiz/vanilla</h1>
+<p><strong>Lightweight semantics for working with plain JSON objects</strong></p>
+<p><code>@fizzwiz/vanilla</code> is a small library that provides <strong>semantic helpers</strong> for working with JSON-compatible objects. A vanilla object is plain and serializable — no special class is required. The library adds meaningful abstractions for storing options and navigating/manipulating nested data safely and consistently.</p>
 <hr>
 <h2>Features</h2>
 <ul>
-<li><strong>Sprites (Autonomous Nodes):</strong> Each Sprite independently maintains its state and connectivity.</li>
-<li><strong>Neighborhood Convergence:</strong> Sprites continuously optimize connections with the most valuable peers.</li>
-<li><strong>Event-Driven Architecture:</strong> Integrates reactive cues and repeating tasks for dynamic behavior.</li>
-<li><strong>Vibes (Connections):</strong> Sprites communicate through subtle, living links.</li>
-<li><strong>Gaia (Global Hub):</strong> Aggregates network information and orchestrates the system.</li>
+<li><strong>OptionStore:</strong> Store and retrieve options by type, with automatic lookup along an instance's prototype chain.</li>
+<li><strong>ObjNavigator:</strong> Navigate and manipulate nested objects by paths in a JSON-like object, with optional creation of intermediate objects.</li>
 </ul>
 <hr>
 <h2>Installation</h2>
-<pre class="prettyprint source lang-bash"><code>npm install @virtuality-is/gaia
+<h3>NPM</h3>
+<pre class="prettyprint source lang-bash"><code>npm install @fizzwiz/vanilla
+</code></pre>
+<h3>Browser (vanilla bundle via jsDelivr)</h3>
+<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;https://cdn.jsdelivr.net/npm/@fizzwiz/vanilla/dist/vanilla.bundle.js&quot;>&lt;/script>
+&lt;script>
+  const { OptionStore, ObjNavigator } = window.fizzwizVanilla;
+
+  const store = ObjNavigator.from({});
+  store.set(&quot;user.profile.name&quot;, &quot;Alice&quot;);
+  console.log(store.get(&quot;user.profile.name&quot;)); // &quot;Alice&quot;
+&lt;/script>
 </code></pre>
 <hr>
 <h2>Quick Start</h2>
-<pre class="prettyprint source lang-javascript"><code>
+<pre class="prettyprint source lang-javascript"><code>import { OptionStore, ObjNavigator } from '@fizzwiz/vanilla';
+
+// OptionStore example
+class Base {}
+class Derived extends Base {}
+
+const options = OptionStore.as({});
+options.set('Base', 'color', 'blue');
+options.set('Derived', 'color', 'red');
+
+console.log(options.get(new Derived(), 'color')); // 'red'
+console.log(options.get(new Base(), 'color'));    // 'blue'
+
+// ObjNavigator example
+const navigator = ObjNavigator.from({});
+navigator.set('user.profile.name', 'Alice');
+navigator.set('user.profile.age', 30);
+
+// Navigate into a sub-object
+const profileNavigator = navigator.with('user.profile');
+console.log(profileNavigator.get('name')); // 'Alice'
+profileNavigator.set('email', 'alice@example.com');
+console.log(navigator.get('user.profile.email')); // 'alice@example.com'
+
+// Navigate back to parent
+const parentNavigator = profileNavigator.without();
+console.log(parentNavigator === navigator); // true
 </code></pre>
 <hr>
 <h2>Documentation</h2>
+<h3>OptionStore</h3>
 <ul>
-<li><strong>Sprite:</strong> Autonomous, self-organizing node.</li>
-<li><strong>Vibe:</strong> Connection between Sprites with activity and value tracking.</li>
-<li><strong>Ostinato:</strong> Repeating tasks or periodic actions.</li>
-<li><strong>Cue:</strong> Event-driven reactive listeners.</li>
-<li><strong>Gaia:</strong> The global aggregator and orchestrator of Sprites.</li>
+<li>Stores options keyed by type names.</li>
+<li>Retrieves options for instances by walking up the prototype chain.</li>
+<li>Useful for defining default behavior or configuration per class hierarchy.</li>
+</ul>
+<h3>ObjNavigator</h3>
+<ul>
+<li>Stores and retrieves nested values by paths (dot-separated strings or arrays).</li>
+<li>Automatically creates intermediate objects when using <code>set()</code>.</li>
+<li>Supports scoped navigation with <code>with()</code> and returning to the parent with <code>without()</code>.</li>
+</ul>
+<hr>
+<h2>Blog &amp; GitHub Pages</h2>
+<ul>
+<li>Blog: <a href="https://fizzwiz-vanilla.blogspot.com">https://fizzwiz-vanilla.blogspot.com</a></li>
+<li>GitHub Pages: <a href="https://fizzwiz.github.io/vanilla">https://fizzwiz.github.io/vanilla</a></li>
 </ul>
 <hr>
 <h2>License</h2>
@@ -85,13 +130,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="aura%250D-%2520%257B@link%2520GaiaAura%257D%250D-%2520%257B@link%2520HttpAura%257Dmodule_.html">aura- <a href="GaiaAura.html">GaiaAura</a>- <a href="HttpAura.html">HttpAura</a></a></li><li><a href="core%250D-%2520%257B@link%2520Aura%257D%250D-%2520%257B@link%2520Gaia%257D%250D-%2520%257B@link%2520Sprite%257D%250D-%2520%257B@link%2520Vibe%257Dmodule_.html">core- <a href="Aura.html">Aura</a>- <a href="Gaia.html">Gaia</a>- <a href="Sprite.html">Sprite</a>- <a href="Vibe.html">Vibe</a></a></li></ul><h3>Classes</h3><ul><li><a href="Aura.html">Aura</a></li><li><a href="Gaia.html">Gaia</a></li><li><a href="GaiaAura.html">GaiaAura</a></li><li><a href="HttpAura.html">HttpAura</a></li><li><a href="Node.html">Node</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="Vibe.html">Vibe</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core.html">core</a></li></ul><h3>Classes</h3><ul><li><a href="ObjNavigator.html">ObjNavigator</a></li><li><a href="OptionStore.html">OptionStore</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Oct 17 2025 16:43:27 GMT+0200 (Ora legale dell’Europa centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat Oct 18 2025 15:39:00 GMT+0200 (Ora legale dell’Europa centrale)
 </footer>
 
 <script> prettyPrint(); </script>
