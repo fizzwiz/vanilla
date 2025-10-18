@@ -33,4 +33,4 @@ Subscribe or bookmark to catch the latest guides, examples, and library updates.
 ---
 
 > *“Keep it plain, keep it structured.”*  
-> — `@fizzwiz`
+> — `@fizzwiz` ✨`
