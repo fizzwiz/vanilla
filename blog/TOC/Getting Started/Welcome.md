@@ -1,4 +1,4 @@
-# Welcome to the 🍦 `@fizzwiz/vanilla` Blog
+# 🌟 Welcome to the `@fizzwiz/vanilla` Blog
 > **“Plain, simple, structured.”**
 
 Welcome to the official blog for `@fizzwiz/vanilla` — your source for lightweight, semantic helpers for working with plain JSON objects.  

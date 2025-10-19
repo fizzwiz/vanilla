@@ -4,8 +4,8 @@ module.exports = {
   entry: path.resolve(__dirname, "src/main/index.js"),
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "store.bundle.js",
-    library: "store",
+    filename: "vanilla.bundle.js",
+    library: "fizzwizvanilla",
     libraryTarget: "umd"
   },
   module: {

@@ -1,6 +1,6 @@
-# OptionStore API
+# 🎪 OptionStore Class
 
-`OptionStore` provides a type-based key/value storage system for JSON-compatible objects, allowing options to be associated with class names or string identifiers and retrieved for instances following the prototype chain.
+`OptionStore` provides a type-based key/value storage system for JSON-compatible objects, allowing options to be associated with class constructors (or string identifiers) and retrieved along the inheritance chain.
 
 ---
 
@@ -48,34 +48,34 @@ store.set(type, key, value)
 
 **Parameters:**
 
-* `type` *(string)*: The type name (e.g., class name) to associate the option with.
+* `type` *(Function)*: The class constructor to associate the option with.
 * `key` *(string)*: The option key.
-* `value` *(*any JSON-serializable type*)*: The value to store.
+* `value` *(any JSON-serializable type)*: The value to store.
 
 **Returns:**
 
 * `this` for chaining.
 
 **Description:**
-Stores an option for a given type. Overwrites any existing value for the same type/key.
+Stores an option for the given class. Overwrites any existing value for the same type/key.
 
-#### `get(instance, key)`
+#### `get(type, key)`
 
 ```javascript
-store.get(instance, key)
+store.get(type, key)
 ```
 
 **Parameters:**
 
-* `instance` *(Object)*: An instance whose prototype chain will be checked.
+* `type` *(Function)*: The class constructor to look up.
 * `key` *(string)*: The option key to retrieve.
 
 **Returns:**
 
-* The value associated with the first type found along the prototype chain, or `undefined` if none found.
+* The value associated with the first type found along the class inheritance chain, or `undefined` if none found.
 
 **Description:**
-Retrieves the value for the given instance, walking up the prototype chain to find the first matching type that has the option.
+Retrieves the value for the given class by walking up its prototype chain to find the first ancestor class with a matching option. Instances are no longer required.
 
 ### Example
 
@@ -84,9 +84,9 @@ class Base {}
 class Derived extends Base {}
 
 const options = OptionStore.as({});
-options.set('Base', 'color', 'blue');
-options.set('Derived', 'color', 'red');
+options.set(Base, 'color', 'blue');
+options.set(Derived, 'color', 'red');
 
-console.log(options.get(new Derived(), 'color')); // 'red'
-console.log(options.get(new Base(), 'color'));    // 'blue'
+console.log(options.get(Derived, 'color')); // 'red'
+console.log(options.get(Base, 'color'));    // 'blue'
 ```

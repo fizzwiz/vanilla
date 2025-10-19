@@ -1,4 +1,4 @@
-# 🧬 ObjNavigator — Navigating Nested JSON Objects
+# ⛵ ObjNavigator — Navigating Nested JSON Objects
 
 `ObjNavigator` provides a semantic API for **navigating and manipulating nested JSON-compatible objects**. It emphasizes clarity, safe access, and scoped navigation.
 

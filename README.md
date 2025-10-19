@@ -8,7 +8,7 @@
 
 ## Features
 
-* **OptionStore:** Store and retrieve options by type, with automatic lookup along an instance's prototype chain.
+* **OptionStore:** Store and retrieve options by type, with automatic lookup along a class prototype chain.
 * **ObjNavigator:** Navigate and manipulate nested objects by paths in a JSON-like object, with optional creation of intermediate objects.
 
 ---
@@ -26,11 +26,11 @@ npm install @fizzwiz/vanilla
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@fizzwiz/vanilla/dist/vanilla.bundle.js"></script>
 <script>
-  const { OptionStore, ObjNavigator } = window.fizzwizVanilla;
+  const { OptionStore, ObjNavigator } = window.fizzwizvanilla;
 
-  const store = ObjNavigator.from({});
-  store.set("user.profile.name", "Alice");
-  console.log(store.get("user.profile.name")); // "Alice"
+  const navigator = ObjNavigator.from({});
+  navigator.set("user.profile.name", "Alice");
+  console.log(navigator.get("user.profile.name")); // "Alice"
 </script>
 ```
 
@@ -58,7 +58,7 @@ navigator.set('user.profile.name', 'Alice');
 navigator.set('user.profile.age', 30);
 
 // Navigate into a sub-object
-const profileNavigator = navigator.with('user.profile');
+const profileNavigator = navigator.within('user.profile');
 console.log(profileNavigator.get('name')); // 'Alice'
 profileNavigator.set('email', 'alice@example.com');
 console.log(navigator.get('user.profile.email')); // 'alice@example.com'
@@ -82,7 +82,7 @@ console.log(parentNavigator === navigator); // true
 
 * Stores and retrieves nested values by paths (dot-separated strings or arrays).
 * Automatically creates intermediate objects when using `set()`.
-* Supports scoped navigation with `with()` and returning to the parent with `without()`.
+* Supports scoped navigation with `within()` and returning to the parent with `without()`.
 
 ---
 

@@ -36,6 +36,16 @@ export class ObjNavigator {
   }
 
   /**
+   * Alias for within()
+   * 
+   * @param {string|string[]} path - Path to the sub-object.
+   * @returns {ObjNavigator} Child navigator scoped to the sub-object.
+   * @throws {Error} If any path segment does not exist or is not an object.   */
+  with(path) {
+    return this.within(path);
+  }
+
+  /**
    * Navigate into a sub-object and return a new ObjNavigator child.
    * Throws if any intermediate object is missing or not an object.
    *

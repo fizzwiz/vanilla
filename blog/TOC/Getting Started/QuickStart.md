@@ -1,4 +1,4 @@
-# Quick Start with 🍦 `@fizzwiz/vanilla`
+# 🚀 Quick Start with `@fizzwiz/vanilla`
 
 `@fizzwiz/vanilla` provides simple, semantic helpers for working with plain JSON objects. Below are some examples to get you started quickly.
 

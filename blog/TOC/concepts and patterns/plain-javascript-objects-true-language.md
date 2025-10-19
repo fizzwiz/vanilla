@@ -31,13 +31,13 @@ A plain JavaScript object — the very structure used by JSON — is the perfect
 
 It offers:
 
-Portability: Works across network boundaries, languages, and storage layers.
+- Portability: Works across network boundaries, languages, and storage layers.
 
-Inspectability: Easy to log, diff, patch, or visualize.
+- Inspectability: Easy to log, diff, patch, or visualize.
 
-Mutability: Incremental configuration changes can be applied directly.
+- Mutability: Incremental configuration changes can be applied directly.
 
-Statelessness: No methods, no hidden state — just pure data.
+- Statelessness: No methods, no hidden state — just pure data.
 
 In short, the object itself becomes the source of truth.
 

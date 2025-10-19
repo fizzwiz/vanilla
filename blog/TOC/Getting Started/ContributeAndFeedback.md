@@ -1,4 +1,4 @@
-# Contribute & Feedback
+# 💬 Contribute & Feedback
 
 We welcome contributions, feedback, and suggestions for 🍦 `@fizzwiz/vanilla`!
 

@@ -1,4 +1,4 @@
-# Introduction to 🍦 `@fizzwiz/vanilla`
+# 🏠 Introduction to `@fizzwiz/vanilla`
 
 `@fizzwiz/vanilla` is a lightweight library that provides semantic helpers for working with **plain JSON objects**.
 

@@ -23,20 +23,20 @@ Whether you're just starting out or exploring advanced abstractions, this guide 
 
 ## 📄 API Overview
 
-### 🧬 Core Package: Building Blocks for Abstraction
+### 🧬 Core API: Semantics for Plain Objects
 
-* [OptionStore Class](https://fizzwiz-vanilla.blogspot.com/p/optionstore-class.html)
+* [OptionStore Class](https://fizzwiz-vanilla.blogspot.com/p/optionstore.html)
   Store and retrieve options by type, supporting prototype chain lookup.
 
-* [ObjNavigator Class](https://fizzwiz-vanilla.blogspot.com/p/objnavigator-class.html)
+* [ObjNavigator Class](https://fizzwiz-vanilla.blogspot.com/p/objnavigator.html)
   Navigate and manipulate nested JSON objects safely and intuitively.
 
 ---
 
 ## 🧠 Concepts & Patterns
 
-* [Clarity Beats Power](https://fizzwiz-vanilla.blogspot.com/p/clarity-beats-power.html)  
-  The guiding principle of `@fizzwiz/vanilla`: favor simple, readable, and maintainable design over unnecessary complexity.
+* [Plain Javascript Objects — The True Language of Distributed Systems](https://fizzwiz-vanilla.blogspot.com/2025/10/plain-javascript-objects-true-language.html)  
+  Exploring why plain JavaScript objects are the most natural, portable, and powerful medium for sharing state and configuration across distributed systems.
 
 ---
 
