@@ -19,6 +19,6 @@ module.exports = {
       }
     ]
   },
-  target: "web", // ✅ optional but explicit
+  target: "web", 
   mode: "production"
 };
