@@ -1,11 +1,12 @@
-🍦 @fizzwiz/vanilla v0.0.0-dev.1 is out!
+# 🍦 @fizzwiz/vanilla v0.0.0-dev.2 is here!
 
-OptionStore & ObjNavigator now provide clean semantics for working with plain JSON objects — perfect for distributed nodes, dynamic configuration, and asynchronous workflows.
+This update smooths out a few rough edges — fixing typos, tightening docs, and keeping the code perfectly in sync.
 
-Keep your data vanilla, shareable, and fully serializable without messy class conversions.
+We’ve also added a new alias: `with()` now works just like `within()` for shorter, cleaner syntax. ✨
 
-🧠 Read more → https://fizzwiz-vanilla.blogspot.com
-📦 npm → https://www.npmjs.com/package/@fizzwiz/vanilla
 
-“Keep it plain, keep it structured.”  
-— `@fizzwiz` ✨`
+🧠 **Learn more:** https://fizzwiz-vanilla.blogspot.com  
+📦 **Grab it on npm:** https://www.npmjs.com/package/@fizzwiz/vanilla
+
+
+— `@fizzwiz` ✨

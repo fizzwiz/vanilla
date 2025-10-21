@@ -1,4 +1,4 @@
-# ⛵ ObjNavigator — Navigating Nested JSON Objects
+# ⛵️ ObjNavigator — Navigating Nested JSON Objects
 
 `ObjNavigator` provides a semantic API for **navigating and manipulating nested JSON-compatible objects**. It emphasizes clarity, safe access, and scoped navigation.
 
@@ -9,15 +9,16 @@
 ### Class: ObjNavigator
 
 * Wraps a plain object for structured navigation.
-* Supports **path-based get/set** operations.
-* Provides **scoped navigation** into sub-objects with `within()` and returns to the parent with `without()`.
+* Supports **path-based get/set/delete** operations.
+* Provides **scoped navigation** into sub-objects with `within()` / `with()` and returns to the parent with `without()`.
+* Includes powerful filtering with `select()`.
 
 ---
 
 ## ⚡ Constructor
 
 ```js
-new ObjNavigator(data, parent = null)
+new ObjNavigator(data = {}, parent = null)
 ```
 
 * `data` — The JSON object to wrap.
@@ -31,7 +32,7 @@ const navigator = new ObjNavigator({ user: { profile: {} } });
 
 ---
 
-## 🛠️ Methods
+## 🔧 Methods
 
 ### `get(path)`
 
@@ -43,6 +44,8 @@ Get a value at a specified path.
 ```js
 navigator.get("user.profile.name"); // "Alice"
 ```
+
+---
 
 ### `set(path, value, createMissing = true)`
 
@@ -59,9 +62,26 @@ navigator.set("user.profile.name", "Alice");
 
 **Throws:** if a segment exists but is not an object, or if missing and `createMissing` is false.
 
+---
+
+### `delete(path)`
+
+Delete a property at the specified path.
+
+* `path` — Dot-separated string or array of keys.
+* Returns `this` for chaining.
+
+```js
+navigator.delete("user.profile.name");
+```
+
+Removes the `name` property if it exists.
+
+---
+
 ### `within(path)`
 
-Navigate into a sub-object and return a new `ObjNavigator` child.
+Navigate into a sub-object and return a new `ObjNavigator` scoped to it.
 
 * `path` — Path to the sub-object.
 * Returns a new `ObjNavigator` scoped to the sub-object.
@@ -70,6 +90,18 @@ Navigate into a sub-object and return a new `ObjNavigator` child.
 ```js
 const profileNav = navigator.within("user.profile");
 ```
+
+---
+
+### `with(path)`
+
+Alias for `within(path)`.
+
+```js
+const profileNav = navigator.with("user.profile");
+```
+
+---
 
 ### `without()`
 
@@ -83,7 +115,34 @@ const parentNav = profileNav.without();
 
 ---
 
-## 📌 Static Methods
+### `select(entryPredicate)`
+
+Filter the current object's entries in place.
+
+* `entryPredicate` — Function `(key, value) => boolean`. Keeps entries returning `true`.
+* Returns `this` for chaining.
+
+```js
+navigator.select((key, value) => key.startsWith("user_"));
+```
+
+Deletes all entries from `data` that do not satisfy the predicate.
+
+---
+
+## 🔖 Static Methods
+
+### `from(obj)`
+
+Create a new navigator from a plain object.
+
+```js
+const nav = ObjNavigator.from({ user: { profile: {} } });
+```
+
+Equivalent to `new ObjNavigator(obj)`.
+
+---
 
 ### `normalizePath(path)`
 
@@ -93,7 +152,7 @@ Converts a path argument to an array of keys.
 * Returns an array of keys.
 
 ```js
-ObjNavigator.normalizePath("user.profile.name"); // ["user","profile","name"]
+ObjNavigator.normalizePath("user.profile.name"); // ["user", "profile", "name"]
 ```
 
 ---
@@ -105,7 +164,7 @@ const navigator = new ObjNavigator({ user: { profile: {} } });
 
 // Set values
 navigator.set("user.profile.name", "Alice");
-navigator.set(["user","profile","age"], 30);
+navigator.set(["user", "profile", "age"], 30);
 
 // Navigate into sub-object
 const profileNav = navigator.within("user.profile");
@@ -114,6 +173,9 @@ console.log(profileNav.get("name")); // "Alice"
 // Modify sub-object
 profileNav.set("email", "alice@example.com");
 console.log(navigator.get("user.profile.email")); // "alice@example.com"
+
+// Filter keys
+navigator.select((key) => key !== "debug");
 
 // Return to parent
 const parentNav = profileNav.without();
@@ -127,8 +189,9 @@ console.log(parentNav === navigator); // true
 `ObjNavigator` offers:
 
 * Safe, predictable navigation and manipulation of nested objects.
-* Clear APIs for entering (`within()`) and leaving (`without()`) scopes.
-* Flexible path handling for both strings and arrays.
+* Clear APIs for entering (`within()` / `with()`) and leaving (`without()`) scopes.
+* Path handling for both strings and arrays.
 * Optional automatic creation of missing intermediate objects.
+* In-place filtering and deletion helpers.
 
 > Emphasizes clarity over raw power for maintainable JSON object handling.

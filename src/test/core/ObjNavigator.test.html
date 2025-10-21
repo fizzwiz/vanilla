@@ -9,8 +9,11 @@
 <body>
   <h1>JS Library Test Page</h1>
   <script>
-    // You can paste or link your test script here
-    console.log('Test page ready');
+    const { OptionStore, ObjNavigator } = window.fizzwizvanilla;
+  
+    const navigator = ObjNavigator.from({});
+    navigator.set("user.profile.name", "Alice");
+    console.log(navigator.get("user.profile.name")); // "Alice"
   </script>
 </body>
 </html>

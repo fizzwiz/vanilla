@@ -11,7 +11,7 @@ export { OptionStore, ObjNavigator };
  * - {@link ObjNavigator} — nested object navigation and manipulation.
  *
  * @example
- * import { OptionStore, ObjNavigator } from '@fizzwiz/store';
+ * import { OptionStore, ObjNavigator } from '@fizzwiz/vanilla';
  *
  * // OptionStore example
  * class Base {}

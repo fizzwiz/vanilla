@@ -137,6 +137,43 @@ export class ObjNavigator {
   }
 
   /**
+   * Deletes a nested property from the underlying data object, given a path.
+   *
+   * The `path` may be a string (dot-separated) or an array of keys.
+   * For example, `delete("user.profile.name")` removes the `name` key
+   * from `this.data.user.profile` if it exists.
+   *
+   * @param {string | Array<string | number>} path
+   *   The path to the property to delete. Can be:
+   *   - a dot-separated string (e.g. `"a.b.c"`), or
+   *   - an array of keys (e.g. `["a", "b", "c"]`).
+   *
+   * @returns {this} The current instance for method chaining.
+   */
+  delete(path) {
+    const items = ObjNavigator.normalizePath(path);
+    const trg = this.get(items.slice(0, -1));
+    if (trg) delete trg[items.at(-1)];
+    return this;
+  }
+
+  /**
+   * Removes entries from `this.data` for which the given predicate returns false.
+   *
+   * @param {function(string, any, number, Array<Array<any, any>>): boolean} entryPredicate
+   *   A predicate called for each entry.  
+   *   Receives arguments: `(key, value, index, entriesArray)`.  
+   *   Should return `true` to keep the entry, or `false` to delete it.
+   * @returns {this} The current instance for chaining.
+   */
+  select(entryPredicate) {
+    for (const [k, v] of Object.entries(this.data)) {
+      if (!entryPredicate(k, v)) delete this.data[k];
+    }
+    return this;
+  }
+
+  /**
    * Normalize a path argument into an array of string keys.
    *
    * @param {string|string[]} path - Dot-separated string or array of keys.
