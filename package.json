@@ -1,6 +1,6 @@
 {
   "name": "@fizzwiz/vanilla",
-  "version": "0.0.0-dev.2",
+  "version": "0.0.0-dev.3",
   "description": "Tiny, semantic utilities for working with plain JSON objects",
   "repository": {
     "type": "git",
@@ -46,6 +46,7 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@fizzwiz/prism": "^0.0.0-dev.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.22.5",

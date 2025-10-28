@@ -17,9 +17,9 @@ export { OptionStore, ObjNavigator };
  * class Base {}
  * class Derived extends Base {}
  * const options = OptionStore.as({});
- * options.set("Base", "color", "blue");
- * options.set("Derived", "color", "red");
- * console.log(options.get(new Derived(), "color")); // "red"
+ * options.set(Base, "color", "blue");
+ * options.set(Derived, "color", "red");
+ * console.log(options.get(Derived, "color")); // "red"
  *
  * // ObjNavigator example
  * const navigator = ObjNavigator.as({});

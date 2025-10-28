@@ -28,11 +28,16 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>ObjNavigator<span class="signature">(data<span class="signature-attributes">opt</span>, parent<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>ObjNavigator<span class="signature">(root<span class="signature-attributes">opt</span>, parent<span class="signature-attributes">opt</span>, path<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description"><p>ObjNavigator provides semantic helpers for navigating and manipulating
-nested JSON-compatible objects using paths. Supports scoped navigation
-with <code>within()</code> and returning to parent objects with <code>without()</code>.</p></div>
+            <div class="class-description"><p>Provides semantic helpers for navigating and manipulating
+nested JSON-compatible objects using dot-notation paths.</p>
+<p><code>ObjNavigator</code> supports:</p>
+<ul>
+<li>Scoped navigation via within</li>
+<li>Returning to parent objects via without</li>
+<li>Declarative exploration of object hierarchies via search</li>
+</ul></div>
         
     
 </header>
@@ -47,7 +52,7 @@ with <code>within()</code> and returning to parent objects with <code>without()<
     
 
     
-    <h4 class="name" id="ObjNavigator"><span class="type-signature"></span>new ObjNavigator<span class="signature">(data<span class="signature-attributes">opt</span>, parent<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ObjNavigator"><span class="type-signature"></span>new ObjNavigator<span class="signature">(root<span class="signature-attributes">opt</span>, parent<span class="signature-attributes">opt</span>, path<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -95,7 +100,7 @@ with <code>within()</code> and returning to parent objects with <code>without()<
 
         <tr>
             
-                <td class="name"><code>data</code></td>
+                <td class="name"><code>root</code></td>
             
 
             <td class="type">
@@ -143,7 +148,7 @@ with <code>within()</code> and returning to parent objects with <code>without()<
 <span class="param-type"><a href="ObjNavigator.html">ObjNavigator</a></span>
 |
 
-<span class="param-type">null</span>
+<span class="param-type">undefined</span>
 
 
             
@@ -164,12 +169,50 @@ with <code>within()</code> and returning to parent objects with <code>without()<
             
                 <td class="default">
                 
-                    null
-                
                 </td>
             
 
             <td class="description last"><p>Optional parent navigator.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Path from parent to this object.</p></td>
         </tr>
 
     
@@ -228,35 +271,6 @@ with <code>within()</code> and returning to parent objects with <code>without()<
 
 
 
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        <p>If <code>data</code> is not an object.</p>
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">Error</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
 
 
 
@@ -291,7 +305,7 @@ with <code>within()</code> and returning to parent objects with <code>without()<
 
         
             
-<h4 class="name" id="data"><span class="type-signature"></span>data<span class="type-signature"> :Object</span></h4>
+<h4 class="name" id="parent"><span class="type-signature"></span>parent<span class="type-signature"> :<a href="ObjNavigator.html">ObjNavigator</a>|undefined</span></h4>
 
 
 
@@ -302,7 +316,10 @@ with <code>within()</code> and returning to parent objects with <code>without()<
     <ul>
         <li>
             
-<span class="param-type">Object</span>
+<span class="param-type"><a href="ObjNavigator.html">ObjNavigator</a></span>
+|
+
+<span class="param-type">undefined</span>
 
 
         </li>
@@ -354,7 +371,7 @@ with <code>within()</code> and returning to parent objects with <code>without()<
 
         
             
-<h4 class="name" id="parent"><span class="type-signature"></span>parent<span class="type-signature"> :<a href="ObjNavigator.html">ObjNavigator</a>|null</span></h4>
+<h4 class="name" id="path"><span class="type-signature"></span>path<span class="type-signature"> :string|undefined</span></h4>
 
 
 
@@ -365,10 +382,73 @@ with <code>within()</code> and returning to parent objects with <code>without()<
     <ul>
         <li>
             
-<span class="param-type"><a href="ObjNavigator.html">ObjNavigator</a></span>
+<span class="param-type">string</span>
 |
 
-<span class="param-type">null</span>
+<span class="param-type">undefined</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="root"><span class="type-signature"></span>root<span class="type-signature"> :Object</span></h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
 
 
         </li>
@@ -438,10 +518,7 @@ with <code>within()</code> and returning to parent objects with <code>without()<
 
 
 <div class="description">
-    <p>Deletes a nested property from the underlying data object, given a path.</p>
-<p>The <code>path</code> may be a string (dot-separated) or an array of keys.
-For example, <code>delete(&quot;user.profile.name&quot;)</code> removes the <code>name</code> key
-from <code>this.data.user.profile</code> if it exists.</p>
+    <p>Deletes a nested property from the object given a path.</p>
 </div>
 
 
@@ -496,11 +573,7 @@ from <code>this.data.user.profile</code> if it exists.</p>
 
             
 
-            <td class="description last"><p>The path to the property to delete. Can be:</p>
-<ul>
-<li>a dot-separated string (e.g. <code>&quot;a.b.c&quot;</code>), or</li>
-<li>an array of keys (e.g. <code>[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]</code>).</li>
-</ul></td>
+            <td class="description last"><p>Path to delete.</p></td>
         </tr>
 
     
@@ -564,10 +637,6 @@ from <code>this.data.user.profile</code> if it exists.</p>
 <h5>Returns:</h5>
 
         
-<div class="param-desc">
-    <p>The current instance for method chaining.</p>
-</div>
-
 
 
 <dl>
@@ -602,7 +671,7 @@ from <code>this.data.user.profile</code> if it exists.</p>
 
 
 <div class="description">
-    <p>Get a value at a path relative to this navigator (read-only).</p>
+    <p>Retrieves a value at a path relative to this navigator (read-only).</p>
 </div>
 
 
@@ -746,7 +815,7 @@ from <code>this.data.user.profile</code> if it exists.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>const name = navigator.get("user.profile.name"); // "Alice"</code></pre>
+    <pre class="prettyprint"><code>const name = nav.get("user.profile.name");</code></pre>
 
 
 
@@ -756,7 +825,7 @@ from <code>this.data.user.profile</code> if it exists.</p>
     
 
     
-    <h4 class="name" id="select"><span class="type-signature"></span>select<span class="signature">(entryPredicate)</span><span class="type-signature"> &rarr; {this}</span></h4>
+    <h4 class="name" id="search"><span class="type-signature"></span>search<span class="signature">()</span><span class="type-signature"> &rarr; {Search.&lt;<a href="ObjNavigator.html">ObjNavigator</a>>}</span></h4>
     
 
     
@@ -764,7 +833,131 @@ from <code>this.data.user.profile</code> if it exists.</p>
 
 
 <div class="description">
-    <p>Removes entries from <code>this.data</code> for which the given predicate returns false.</p>
+    <p>Creates a Search instance that declaratively explores
+the structure of the object tree starting from this navigator.</p>
+<p>Each expansion step maps the current navigator to a list of
+child navigators — one for each property of the underlying object.</p>
+<p>This enables <strong>structural traversal</strong> across both nested objects and
+leaf primitives, as every property value is represented as its own
+<a href="ObjNavigator.html">ObjNavigator</a>.</p>
+<p>By default, the <code>Search</code> is driven by a FIFO queue. However, a custom
+exploration strategy can be provided by chaining <code>.via(queue)</code>.<br>
+Subsequent fluent calls such as <code>.which()</code>, <code>.sthen()</code>, and <code>.what()</code>
+can further restrict, transform, or resolve the search.</p>
+<p>Internally, each expansion applies:</p>
+<pre class="prettyprint source lang-js"><code>nav => Object.entries(nav.root)
+    .map(([key, value]) => new ObjNavigator(value, nav, key))
+</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A Search instance yielding <a href="ObjNavigator.html">ObjNavigator</a> objects.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Search.&lt;<a href="ObjNavigator.html">ObjNavigator</a>></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>// Declarative exploration of nested objectsconst result = ObjNavigator.from(obj)  .search()  .which(nav => nav.get('a.b'))  // only navigators whose root object has an 'a.b' path  .sthen(map)                    // transforms matching navigators  .what();                       // resolves the first satisfying object</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="select"><span class="type-signature"></span>select<span class="signature">(predicate)</span><span class="type-signature"> &rarr; {this}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Removes entries from <code>this.root</code> for which the given predicate returns false.</p>
 </div>
 
 
@@ -800,7 +993,7 @@ from <code>this.data.user.profile</code> if it exists.</p>
 
         <tr>
             
-                <td class="name"><code>entryPredicate</code></td>
+                <td class="name"><code>predicate</code></td>
             
 
             <td class="type">
@@ -816,9 +1009,7 @@ from <code>this.data.user.profile</code> if it exists.</p>
 
             
 
-            <td class="description last"><p>A predicate called for each entry.<br>
-Receives arguments: <code>(key, value, index, entriesArray)</code>.<br>
-Should return <code>true</code> to keep the entry, or <code>false</code> to delete it.</p></td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -882,10 +1073,6 @@ Should return <code>true</code> to keep the entry, or <code>false</code> to dele
 <h5>Returns:</h5>
 
         
-<div class="param-desc">
-    <p>The current instance for chaining.</p>
-</div>
-
 
 
 <dl>
@@ -920,7 +1107,7 @@ Should return <code>true</code> to keep the entry, or <code>false</code> to dele
 
 
 <div class="description">
-    <p>Set a value at a path relative to this navigator.
+    <p>Sets a value at a path relative to this navigator.
 Missing intermediate objects are auto-created if <code>createMissing</code> is true.</p>
 </div>
 
@@ -1066,7 +1253,7 @@ Missing intermediate objects are auto-created if <code>createMissing</code> is t
                 </td>
             
 
-            <td class="description last"><p>Auto-create missing intermediate objects.</p></td>
+            <td class="description last"><p>Auto-create missing objects.</p></td>
         </tr>
 
     
@@ -1132,7 +1319,7 @@ Missing intermediate objects are auto-created if <code>createMissing</code> is t
 <dl>
     <dt>
         <div class="param-desc">
-        <p>If a path segment exists but is not an object, or missing and <code>createMissing</code> is false.</p>
+        <p>If a path segment exists but is not an object.</p>
         </div>
     </dt>
     <dd></dd>
@@ -1159,10 +1346,6 @@ Missing intermediate objects are auto-created if <code>createMissing</code> is t
 <h5>Returns:</h5>
 
         
-<div class="param-desc">
-    <p>The current ObjNavigator instance.</p>
-</div>
-
 
 
 <dl>
@@ -1182,11 +1365,6 @@ Missing intermediate objects are auto-created if <code>createMissing</code> is t
 
 
 
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>navigator.set("user.profile.name", "Alice");</code></pre>
-
-
 
         
             
@@ -1194,7 +1372,7 @@ Missing intermediate objects are auto-created if <code>createMissing</code> is t
     
 
     
-    <h4 class="name" id="with"><span class="type-signature"></span>with<span class="signature">(path)</span><span class="type-signature"> &rarr; {<a href="ObjNavigator.html">ObjNavigator</a>}</span></h4>
+    <h4 class="name" id="with"><span class="type-signature"></span>with<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -1202,7 +1380,7 @@ Missing intermediate objects are auto-created if <code>createMissing</code> is t
 
 
 <div class="description">
-    <p>Alias for within()</p>
+    <p>Alias for within.</p>
 </div>
 
 
@@ -1211,58 +1389,6 @@ Missing intermediate objects are auto-created if <code>createMissing</code> is t
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>path</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-|
-
-<span class="param-type">Array.&lt;string></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Path to the sub-object.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -1316,59 +1442,8 @@ Missing intermediate objects are auto-created if <code>createMissing</code> is t
 
 
 
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        <p>If any path segment does not exist or is not an object.</p>
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">Error</span>
 
 
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>Child navigator scoped to the sub-object.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="ObjNavigator.html">ObjNavigator</a></span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -1562,7 +1637,7 @@ Throws if any intermediate object is missing or not an object.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>const navigator = ObjNavigator.from({ user: { profile: {} } });const profileNavigator = navigator.within("user.profile");</code></pre>
+    <pre class="prettyprint"><code>const nav = ObjNavigator.from({ user: { profile: {} } });const profileNav = nav.within("user.profile");</code></pre>
 
 
 
@@ -1580,7 +1655,7 @@ Throws if any intermediate object is missing or not an object.</p>
 
 
 <div class="description">
-    <p>Returns the parent ObjNavigator, or null if none exists.</p>
+    <p>Returns the parent ObjNavigator, or <code>null</code> if none exists.</p>
 </div>
 
 
@@ -1671,7 +1746,7 @@ Throws if any intermediate object is missing or not an object.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>const parentNavigator = profileNavigator.without();</code></pre>
+    <pre class="prettyprint"><code>const parentNav = profileNav.without();</code></pre>
 
 
 
@@ -1830,7 +1905,7 @@ Throws if any intermediate object is missing or not an object.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>const navigator = ObjNavigator.from({ user: { profile: {} } });</code></pre>
+    <pre class="prettyprint"><code>const nav = ObjNavigator.from({ user: { profile: {} } });</code></pre>
 
 
 
@@ -1992,7 +2067,7 @@ Throws if any intermediate object is missing or not an object.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>ObjNavigator.normalizePath("user.profile.name"); // ["user","profile","name"]</code></pre>
+    <pre class="prettyprint"><code>ObjNavigator.normalizePath("user.profile.name"); // ["user", "profile", "name"]</code></pre>
 
 
 
@@ -2018,7 +2093,7 @@ Throws if any intermediate object is missing or not an object.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Oct 21 2025 18:18:45 GMT+0200 (Ora legale dell’Europa centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Oct 28 2025 17:01:46 GMT+0100 (Ora standard dell’Europa centrale)
 </footer>
 
 <script> prettyPrint(); </script>

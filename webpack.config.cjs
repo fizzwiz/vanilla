@@ -5,7 +5,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "vanilla.bundle.js",
-    library: "fizzwizvanilla",
+    library: "vanilla",
     libraryTarget: "umd"
   },
   module: {

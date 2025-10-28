@@ -1,25 +1,32 @@
+import { Search } from "@fizzwiz/prism";
+
 /**
- * ObjNavigator provides semantic helpers for navigating and manipulating
- * nested JSON-compatible objects using paths. Supports scoped navigation
- * with `within()` and returning to parent objects with `without()`.
+ * Provides semantic helpers for navigating and manipulating
+ * nested JSON-compatible objects using dot-notation paths.
+ *
+ * `ObjNavigator` supports:
+ * - Scoped navigation via {@link within}
+ * - Returning to parent objects via {@link without}
+ * - Declarative exploration of object hierarchies via {@link search}
  */
 export class ObjNavigator {
   /**
    * Creates a new ObjNavigator instance.
    *
-   * @param {Object} [data={}] - The underlying JSON object to wrap.
-   * @param {ObjNavigator|null} [parent=null] - Optional parent navigator.
-   * @throws {Error} If `data` is not an object.
+   * @param {Object} [root={}] - The underlying JSON object to wrap.
+   * @param {ObjNavigator|undefined} [parent=undefined] - Optional parent navigator.
+   * @param {string|undefined} [path=undefined] - Path from parent to this object.
    */
-  constructor(data = {}, parent = null) {
-    if (typeof data !== "object" || data === null) {
-      throw new Error("ObjNavigator can only wrap an object");
-    }
-    /** @type {Object} */
-    this.data = data;
+  constructor(root = {}, parent = undefined, path = undefined) {
 
-    /** @type {ObjNavigator|null} */
+    /** @type {Object} */
+    this.root = root;
+
+    /** @type {ObjNavigator|undefined} */
     this.parent = parent;
+
+    /** @type {string|undefined} */
+    this.path = path;
   }
 
   /**
@@ -29,18 +36,13 @@ export class ObjNavigator {
    * @returns {ObjNavigator} A new navigator instance.
    *
    * @example
-   * const navigator = ObjNavigator.from({ user: { profile: {} } });
+   * const nav = ObjNavigator.from({ user: { profile: {} } });
    */
   static from(obj) {
     return new ObjNavigator(obj);
   }
 
-  /**
-   * Alias for within()
-   * 
-   * @param {string|string[]} path - Path to the sub-object.
-   * @returns {ObjNavigator} Child navigator scoped to the sub-object.
-   * @throws {Error} If any path segment does not exist or is not an object.   */
+  /** Alias for {@link within}. */
   with(path) {
     return this.within(path);
   }
@@ -54,12 +56,12 @@ export class ObjNavigator {
    * @throws {Error} If any path segment does not exist or is not an object.
    *
    * @example
-   * const navigator = ObjNavigator.from({ user: { profile: {} } });
-   * const profileNavigator = navigator.within("user.profile");
+   * const nav = ObjNavigator.from({ user: { profile: {} } });
+   * const profileNav = nav.within("user.profile");
    */
   within(path) {
     const keys = ObjNavigator.normalizePath(path);
-    let current = this.data;
+    let current = this.root;
 
     for (const key of keys) {
       if (!(key in current) || typeof current[key] !== "object" || current[key] === null) {
@@ -68,33 +70,33 @@ export class ObjNavigator {
       current = current[key];
     }
 
-    return new ObjNavigator(current, this);
+    return new ObjNavigator(current, this, keys.join("."));
   }
 
   /**
-   * Returns the parent ObjNavigator, or null if none exists.
+   * Returns the parent ObjNavigator, or `null` if none exists.
    *
    * @returns {ObjNavigator|null}
    *
    * @example
-   * const parentNavigator = profileNavigator.without();
+   * const parentNav = profileNav.without();
    */
   without() {
-    return this.parent;
+    return this.parent || null;
   }
 
   /**
-   * Get a value at a path relative to this navigator (read-only).
+   * Retrieves a value at a path relative to this navigator (read-only).
    *
    * @param {string|string[]} path - Path to retrieve.
    * @returns {*} The value at the path, or undefined if not found.
    *
    * @example
-   * const name = navigator.get("user.profile.name"); // "Alice"
+   * const name = nav.get("user.profile.name");
    */
   get(path) {
     const keys = ObjNavigator.normalizePath(path);
-    let current = this.data;
+    let current = this.root;
 
     for (const key of keys) {
       if (!(key in current)) return undefined;
@@ -105,21 +107,18 @@ export class ObjNavigator {
   }
 
   /**
-   * Set a value at a path relative to this navigator.
+   * Sets a value at a path relative to this navigator.
    * Missing intermediate objects are auto-created if `createMissing` is true.
    *
    * @param {string|string[]} path - Path to set.
    * @param {*} value - Value to assign.
-   * @param {boolean} [createMissing=true] - Auto-create missing intermediate objects.
-   * @returns {this} The current ObjNavigator instance.
-   * @throws {Error} If a path segment exists but is not an object, or missing and `createMissing` is false.
-   *
-   * @example
-   * navigator.set("user.profile.name", "Alice");
+   * @param {boolean} [createMissing=true] - Auto-create missing objects.
+   * @returns {this}
+   * @throws {Error} If a path segment exists but is not an object.
    */
   set(path, value, createMissing = true) {
     const keys = ObjNavigator.normalizePath(path);
-    let current = this.data;
+    let current = this.root;
 
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i];
@@ -137,40 +136,71 @@ export class ObjNavigator {
   }
 
   /**
-   * Deletes a nested property from the underlying data object, given a path.
+   * Deletes a nested property from the object given a path.
    *
-   * The `path` may be a string (dot-separated) or an array of keys.
-   * For example, `delete("user.profile.name")` removes the `name` key
-   * from `this.data.user.profile` if it exists.
-   *
-   * @param {string | Array<string | number>} path
-   *   The path to the property to delete. Can be:
-   *   - a dot-separated string (e.g. `"a.b.c"`), or
-   *   - an array of keys (e.g. `["a", "b", "c"]`).
-   *
-   * @returns {this} The current instance for method chaining.
+   * @param {string | Array<string|number>} path - Path to delete.
+   * @returns {this}
    */
   delete(path) {
-    const items = ObjNavigator.normalizePath(path);
-    const trg = this.get(items.slice(0, -1));
-    if (trg) delete trg[items.at(-1)];
+    const keys = ObjNavigator.normalizePath(path);
+    const target = this.get(keys.slice(0, -1));
+    if (target) delete target[keys.at(-1)];
     return this;
   }
 
   /**
-   * Removes entries from `this.data` for which the given predicate returns false.
+   * Removes entries from `this.root` for which the given predicate returns false.
    *
-   * @param {function(string, any, number, Array<Array<any, any>>): boolean} entryPredicate
-   *   A predicate called for each entry.  
-   *   Receives arguments: `(key, value, index, entriesArray)`.  
-   *   Should return `true` to keep the entry, or `false` to delete it.
-   * @returns {this} The current instance for chaining.
+   * @param {function(key:string, value:any, index:number, entries:Array<Array<string,any>>): boolean} predicate
+   * @returns {this}
    */
-  select(entryPredicate) {
-    for (const [k, v] of Object.entries(this.data)) {
-      if (!entryPredicate(k, v)) delete this.data[k];
+  select(predicate) {
+    for (const [k, v] of Object.entries(this.root)) {
+      if (!predicate(k, v)) delete this.root[k];
     }
     return this;
+  }
+
+  /**
+   * Creates a {@link Search} instance that declaratively explores
+   * the structure of the object tree starting from this navigator.
+   *
+   * Each expansion step maps the current navigator to a list of
+   * child navigators — one for each property of the underlying object.
+   * 
+   * This enables **structural traversal** across both nested objects and
+   * leaf primitives, as every property value is represented as its own
+   * {@link ObjNavigator}.
+   * 
+   * By default, the `Search` is driven by a FIFO queue. However, a custom
+   * exploration strategy can be provided by chaining `.via(queue)`.  
+   * Subsequent fluent calls such as `.which()`, `.sthen()`, and `.what()`
+   * can further restrict, transform, or resolve the search.
+   *
+   * Internally, each expansion applies:
+   * ```js
+   * nav => Object.entries(nav.root)
+   *     .map(([key, value]) => new ObjNavigator(value, nav, key))
+   * ```
+   *
+   * @returns {Search<ObjNavigator>} 
+   *   A {@link Search} instance yielding {@link ObjNavigator} objects.
+   *
+   * @example
+   * // Declarative exploration of nested objects
+   * const result = ObjNavigator.from(obj)
+   *   .search()
+   *   .which(nav => nav.get('a.b'))  // only navigators whose root object has an 'a.b' path
+   *   .sthen(map)                    // transforms matching navigators
+   *   .what();                       // resolves the first satisfying object
+   */
+  search() {
+    return new Search()
+      .from(this)
+      .through(nav =>
+        Object.entries(nav.root)
+          .map(([key, value]) => new ObjNavigator(value, nav, key))
+      );
   }
 
   /**
@@ -180,7 +210,7 @@ export class ObjNavigator {
    * @returns {string[]} Array of keys.
    *
    * @example
-   * ObjNavigator.normalizePath("user.profile.name"); // ["user","profile","name"]
+   * ObjNavigator.normalizePath("user.profile.name"); // ["user", "profile", "name"]
    */
   static normalizePath(path) {
     return Array.isArray(path) ? path : path.split(".").filter(Boolean);

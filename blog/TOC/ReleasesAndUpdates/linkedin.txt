@@ -1,12 +1,11 @@
-# 🍦 @fizzwiz/vanilla v0.0.0-dev.2 is here!
+# 🍦 @fizzwiz/vanilla v0.0.0-dev.3 is here!
 
-This update smooths out a few rough edges — fixing typos, tightening docs, and keeping the code perfectly in sync.
+We’re excited to release **v0.0.0-dev.3**! This version brings **declarative exploration** and enhanced object navigation:
 
-We’ve also added a new alias: `with()` now works just like `within()` for shorter, cleaner syntax. ✨
+* `search()` enables fluent traversal of nested objects.
+* `delete()` and `select()` make removing or filtering entries easy.
 
-
-🧠 **Learn more:** https://fizzwiz-vanilla.blogspot.com  
+🧠 **Learn more:** https://fizzwiz-vanilla.blogspot.com
 📦 **Grab it on npm:** https://www.npmjs.com/package/@fizzwiz/vanilla
-
 
 — `@fizzwiz` ✨

@@ -1,5 +1,6 @@
 import assert from "assert";
 import { ObjNavigator } from "../../main/core/ObjNavigator.js";
+import { Search } from "@fizzwiz/prism";
 
 describe("ObjNavigator", function () {
 let navigator;
@@ -60,7 +61,7 @@ assert.strictEqual(navigator.get("user.profile.name"), undefined);
 it("should filter entries with select()", function () {
 navigator.set("a", 1).set("b", 2).set("keep", 3);
 navigator.select((key) => key === "keep");
-assert.deepStrictEqual(Object.keys(navigator.data), ["keep"]);
+assert.deepStrictEqual(Object.keys(navigator.root), ["keep"]);
 });
 
 it("should return undefined for non-existing paths with get()", function () {
@@ -82,4 +83,87 @@ it("should normalize path correctly", function () {
 assert.deepStrictEqual(ObjNavigator.normalizePath("a.b.c"), ["a", "b", "c"]);
 assert.deepStrictEqual(ObjNavigator.normalizePath(["a", "b"]), ["a", "b"]);
 });
+
+describe("ObjNavigator.search()", () => {
+
+  it("should return a Search instance", () => {
+    const nav = ObjNavigator.from({ a: 1 });
+    const search = nav.search();
+
+    assert.ok(search instanceof Search, "Expected a Search instance");
+  });
+
+  it("should expand recursively into all descendant navigators, including primitives", () => {
+    const data = { a: { x: 1 }, b: { y: 2 } };
+    const nav = ObjNavigator.from(data);
+  
+    const search = nav.search();
+    const results = [...search]; // recursive BFS expansion
+  
+    // Expect 5 navigators in total
+    assert.strictEqual(results.length, 5);
+  
+    const paths = results.map(n => n.path);
+    assert.deepStrictEqual(
+      new Set(paths),
+      new Set(["a", "b", "x", "y", undefined]), // root path may be undefined
+      "Expected navigators for a, b, x, y, and the root"
+    );
+  
+    // Ensure both objects and primitives are navigated
+    assert.ok(results.some(n => typeof n.root === "number"), "Should include primitive roots");
+  });
+  
+
+  it("should include navigators over primitives as well", () => {
+    const data = { a: 1, b: { c: 2 } };
+    const nav = ObjNavigator.from(data);
+
+    const search = nav.search();
+    const results = [...search];
+
+    const hasPrimitive = results.some(n => typeof n.root === "number");
+    assert.ok(hasPrimitive, "Expected primitive values to be navigated too");
+  });
+
+  it("should support fluent filtering and transformation", () => {
+    const data = {
+      user: { name: "Alice" },
+      config: { enabled: true },
+      version: 2
+    };
+    const nav = ObjNavigator.from(data);
+
+    // .which() filters navigators with a 'name' key in their root
+    const result = nav.search()
+      .which(n => n.get("name") !== undefined)
+      .sthen(n => n.get("name"))
+      .what();
+
+    assert.strictEqual(result, "Alice");
+  });
+
+  it("should traverse deeply nested structures via chained search", () => {
+    const data = { a: { b: { c: { d: 42 } } } };
+    const nav = ObjNavigator.from(data);
+
+    // Breadth-first search across nested navigators
+    const collected = [];
+    for (const n of nav.search()) {
+      collected.push(n.path);
+      if (typeof n.root === "object") {
+        for (const child of n.search()) {
+          collected.push(child.path);
+        }
+      }
+    }
+
+    assert.ok(collected.includes("a"));
+    assert.ok(collected.includes("b"));
+    assert.ok(collected.includes("c"));
+    assert.ok(collected.includes("d"));
+  });
+
+});
+
 });
