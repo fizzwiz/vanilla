@@ -67,8 +67,8 @@ console.log(navigator.get('user.profile.email')); // 'alice@example.com'
 console.log(profileNav.without() === navigator); // true
 
 // Declarative exploration with Search
-const navigators = navigator.search()
-  .which(nav => nav.get('age'))     // iterates all the descendant navigators whose root object has an 'age' property
+const navigators = navigator.search()  // Search() object iterating all the descendant navigators 
+  .which(nav => nav.get('age'))         // restricts the search to those navigators whose root object has an 'age' property
 ```
 
 ---
