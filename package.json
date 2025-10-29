@@ -1,6 +1,6 @@
 {
   "name": "@fizzwiz/vanilla",
-  "version": "0.0.0-dev.3",
+  "version": "0.0.0-dev.4",
   "description": "Tiny, semantic utilities for working with plain JSON objects",
   "repository": {
     "type": "git",
