@@ -23,11 +23,15 @@ class Base {}
 class Derived extends Base {}
 
 const options = OptionStore.as({});
-options.set('Base', 'color', 'blue');
-options.set('Derived', 'color', 'red');
+options.set(Base, 'color', 'blue');
+options.set(Derived, 'color', 'red');
 
 console.log(options.get(Derived, 'color')); // 'red'
 console.log(options.get(Base, 'color'));    // 'blue'
+
+// Declarative exploration with Search
+const navigators = navigator.search()
+  .which(nav => nav.get('age'))     // iterates all the descendant navigators whose root object has an 'age' property
 ```
 
 ---

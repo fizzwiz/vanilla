@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>ObjNavigator<span class="signature">(root<span class="signature-attributes">opt</span>, parent<span class="signature-attributes">opt</span>, path<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>ObjNavigator<span class="signature">(root<span class="signature-attributes">opt</span>, parent<span class="signature-attributes">opt</span>, step<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
             <div class="class-description"><p>Provides semantic helpers for navigating and manipulating
 nested JSON-compatible objects using dot-notation paths.</p>
@@ -52,7 +52,7 @@ nested JSON-compatible objects using dot-notation paths.</p>
     
 
     
-    <h4 class="name" id="ObjNavigator"><span class="type-signature"></span>new ObjNavigator<span class="signature">(root<span class="signature-attributes">opt</span>, parent<span class="signature-attributes">opt</span>, path<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ObjNavigator"><span class="type-signature"></span>new ObjNavigator<span class="signature">(root<span class="signature-attributes">opt</span>, parent<span class="signature-attributes">opt</span>, step<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -179,7 +179,7 @@ nested JSON-compatible objects using dot-notation paths.</p>
 
         <tr>
             
-                <td class="name"><code>path</code></td>
+                <td class="name"><code>step</code></td>
             
 
             <td class="type">
@@ -212,7 +212,7 @@ nested JSON-compatible objects using dot-notation paths.</p>
                 </td>
             
 
-            <td class="description last"><p>Path from parent to this object.</p></td>
+            <td class="description last"><p>Step from parent to this navigator (e.g. 'user.age').</p></td>
         </tr>
 
     
@@ -371,7 +371,7 @@ nested JSON-compatible objects using dot-notation paths.</p>
 
         
             
-<h4 class="name" id="path"><span class="type-signature"></span>path<span class="type-signature"> :string|undefined</span></h4>
+<h4 class="name" id="root"><span class="type-signature"></span>root<span class="type-signature"> :Object</span></h4>
 
 
 
@@ -382,10 +382,7 @@ nested JSON-compatible objects using dot-notation paths.</p>
     <ul>
         <li>
             
-<span class="param-type">string</span>
-|
-
-<span class="param-type">undefined</span>
+<span class="param-type">Object</span>
 
 
         </li>
@@ -437,7 +434,7 @@ nested JSON-compatible objects using dot-notation paths.</p>
 
         
             
-<h4 class="name" id="root"><span class="type-signature"></span>root<span class="type-signature"> :Object</span></h4>
+<h4 class="name" id="step"><span class="type-signature"></span>step<span class="type-signature"> :string|undefined</span></h4>
 
 
 
@@ -448,7 +445,10 @@ nested JSON-compatible objects using dot-notation paths.</p>
     <ul>
         <li>
             
-<span class="param-type">Object</span>
+<span class="param-type">string</span>
+|
+
+<span class="param-type">undefined</span>
 
 
         </li>
@@ -816,6 +816,188 @@ nested JSON-compatible objects using dot-notation paths.</p>
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>const name = nav.get("user.profile.name");</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="path"><span class="type-signature"></span>path<span class="signature">(byProperty<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Path}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Returns the path from the top-level ancestor navigator to this navigator.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>byProperty</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><ul>
+<li><code>false</code> (default): returns the logical path, counting <strong>navigator steps</strong> (one per <code>.within()</code> / <code>.with()</code>).</li>
+<li><code>true</code>: returns the full <strong>property-based path</strong>, expanding each compound step into its constituent properties (e.g., &quot;user.profile.name&quot; → [&quot;user&quot;, &quot;profile&quot;, &quot;name&quot;]).</li>
+</ul></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A <code>Path</code> object representing the accumulated steps or properties.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Path</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const ancestor = ObjNavigator.from({});const nav = ancestor.set('user.profile.name', {}).with('user.profile');console.log(nav.path().length);      // logical depth: 1console.log(nav.path(true).length);   // property-based depth: 2console.log(nav.path(true).last);     // 'profile'</code></pre>
 
 
 
@@ -2093,7 +2275,7 @@ Throws if any intermediate object is missing or not an object.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Oct 28 2025 17:01:46 GMT+0100 (Ora standard dell’Europa centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Oct 29 2025 13:19:17 GMT+0100 (Ora standard dell’Europa centrale)
 </footer>
 
 <script> prettyPrint(); </script>

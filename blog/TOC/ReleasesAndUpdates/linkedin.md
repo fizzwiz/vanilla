@@ -1,14 +1,11 @@
-# 🍦 @fizzwiz/vanilla v0.0.0-dev.2 is here!
+# 🍦 @fizzwiz/vanilla v0.0.0-dev.4 is here!
 
-This update smooths out a few rough edges — fixing typos, tightening docs, and keeping the code perfectly in sync.
+We’re excited to release **v0.0.0-dev.4**! This version introduces **path-aware navigation**:
 
-We’ve also added a new alias: `with()` now works just like `within()` for shorter, cleaner syntax. ✨
+* Each `ObjNavigator` now tracks the `step` from its parent.
+* `path(byProperty)` lets you compute **logical** or **structural depth** in nested objects.
 
----
-
-🧠 **Learn more:** [fizzwiz-vanilla.blogspot.com](https://fizzwiz-vanilla.blogspot.com)  
-📦 **Grab it on npm:** [@fizzwiz/vanilla](https://www.npmjs.com/package/@fizzwiz/vanilla)
-
----
+🧠 **Learn more:** [https://fizzwiz-vanilla.blogspot.com](https://fizzwiz-vanilla.blogspot.com)
+📦 **Grab it on npm:** [https://www.npmjs.com/package/@fizzwiz/vanilla](https://www.npmjs.com/package/@fizzwiz/vanilla)
 
 — `@fizzwiz` ✨

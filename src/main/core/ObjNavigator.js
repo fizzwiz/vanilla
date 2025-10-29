@@ -1,4 +1,5 @@
 import { Search } from "@fizzwiz/prism";
+import { Path } from "@fizzwiz/fluent";
 
 /**
  * Provides semantic helpers for navigating and manipulating
@@ -15,9 +16,9 @@ export class ObjNavigator {
    *
    * @param {Object} [root={}] - The underlying JSON object to wrap.
    * @param {ObjNavigator|undefined} [parent=undefined] - Optional parent navigator.
-   * @param {string|undefined} [path=undefined] - Path from parent to this object.
+   * @param {string|undefined} [step=undefined] - Step from parent to this navigator (e.g. 'user.age').
    */
-  constructor(root = {}, parent = undefined, path = undefined) {
+  constructor(root = {}, parent = undefined, step = undefined) {
 
     /** @type {Object} */
     this.root = root;
@@ -26,7 +27,28 @@ export class ObjNavigator {
     this.parent = parent;
 
     /** @type {string|undefined} */
-    this.path = path;
+    this.step = step;
+  }
+
+  /**
+
+  * Returns the path from the top-level ancestor navigator to this navigator.
+  *
+  * @param {boolean} [byProperty=false]
+  * * `false` (default): returns the logical path, counting **navigator steps** (one per `.within()` / `.with()`).
+  * * `true`: returns the full **property-based path**, expanding each compound step into its constituent properties (e.g., "user.profile.name" → ["user", "profile", "name"]).
+  * @returns {Path} A `Path` object representing the accumulated steps or properties.
+  *
+  * @example
+  * const ancestor = ObjNavigator.from({});
+  * const nav = ancestor.set('user.profile.name', {}).with('user.profile');
+  *
+  * console.log(nav.path().length);      // logical depth: 1
+  * console.log(nav.path(true).length);   // property-based depth: 2
+  * console.log(nav.path(true).last);     // 'profile'
+  */
+  path(byProperty = false) {
+    return this.parent? this.parent.path(byProperty).along(byProperty? this.step.split('.'): [this.step]): new Path();
   }
 
   /**

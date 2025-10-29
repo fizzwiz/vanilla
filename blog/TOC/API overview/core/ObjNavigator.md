@@ -1,6 +1,6 @@
 # ⛵ ObjNavigator — Navigating Nested JSON Objects
 
-`ObjNavigator` provides semantic helpers for **navigating and manipulating nested JSON-compatible objects** using dot-notation paths. It emphasizes **clarity**, **safe access**, and **declarative exploration** of object hierarchies.
+`ObjNavigator` provides semantic helpers for **navigating and manipulating nested JSON-compatible objects** using dot-notation paths. It emphasizes **clarity**, **safe access**, **declarative exploration**, and **path introspection**.
 
 ---
 
@@ -11,19 +11,21 @@
 * Wraps a plain object for structured navigation.
 * Supports **path-based get/set/delete** operations.
 * Enables **scoped navigation** into sub-objects with `within()` / `with()` and returns to the parent with `without()`.
-* Integrates with `@fizzwiz/prism`’s {@link Search} for **declarative traversal** of JSON structures.
+* Tracks **step** from parent navigator for introspection.
+* Computes **path** (logical or property-based) via `path()`.
+* Integrates with `@fizzwiz/prism`’s {@link Search} for **declarative traversal**.
 
 ---
 
 ## ⚡ Constructor
 
 ```js
-new ObjNavigator(root = {}, parent = undefined, path = undefined)
+new ObjNavigator(root = {}, parent = undefined, step = undefined)
 ```
 
 * `root` — The underlying JSON object to wrap.
 * `parent` — Optional parent navigator for scoped navigation.
-* `path` — Optional path from the parent navigator.
+* `step` — Optional path segment from the parent navigator.
 
 ```js
 const nav = new ObjNavigator({ user: { profile: {} } });
@@ -125,6 +127,22 @@ Deletes all entries from `root` that do not satisfy the predicate.
 
 ---
 
+### `path(byProperty = false)`
+
+Compute the path from the top-level ancestor to this navigator.
+
+* `byProperty` — `false` (default) counts **navigator steps**, `true` counts **every property segment**.
+* Returns a `Path` object.
+
+```js
+const profileNav = nav.with("user.profile");
+console.log(profileNav.path().length);      // 1 (logical depth)
+console.log(profileNav.path(true).length);  // 2 (property-based depth)
+console.log(profileNav.path(true).last);    // 'profile'
+```
+
+---
+
 ### `search()`
 
 Create a {@link Search} instance that declaratively explores the structure of the object tree starting from this navigator.
@@ -136,7 +154,7 @@ nav => Object.entries(nav.root)
   .map(([key, value]) => new ObjNavigator(value, nav, key))
 ```
 
-This enables **breadth-first traversal** or other custom exploration strategies via `.via(queue)`, and filtering or transformation via fluent methods such as `.which()`, `.sthen()`, and `.what()`.
+Supports breadth-first traversal or other exploration strategies via `.via(queue)` and filtering/transformation via `.which()`, `.sthen()`, and `.what()`.
 
 ```js
 const result = ObjNavigator.from(obj)
@@ -192,13 +210,17 @@ profileNav.set("email", "alice@example.com");
 // Filter keys
 profileNav.select((key) => key !== "debug");
 
+// Path introspection
+console.log(profileNav.path().length);     // navigator steps
+console.log(profileNav.path(true).length); // property segments
+
 // Return to parent
 console.log(profileNav.without() === nav); // true
 
 // Explore structure declaratively
-const result = nav.search()
-  .which(n => n.get('user.profile'))
-  .what();
+const result = nav.search()              // lazily iterates all descendant navigators (including nav)
+  .which(n => n.get('user.profile'));   // keeps only navigators whose root object defines 'user.profile'
+
 ```
 
 ---
@@ -209,6 +231,7 @@ const result = nav.search()
 
 * Safe, predictable navigation and manipulation of nested objects.
 * Scoped entry and exit (`within()` / `without()`).
+* Step tracking via `step` and path introspection via `path()`.
 * Integration with `@fizzwiz/prism` `Search` for declarative exploration.
 * Path normalization and flexible string/array path support.
 * Optional auto-creation of missing intermediates.

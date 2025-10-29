@@ -8,16 +8,18 @@ A vanilla object is **simple, serializable, and flexible**. This library allows 
 
 ### OptionStore
 
-* Stores options keyed by type names (e.g., class names or string identifiers).
+* Stores options keyed by class names.
 * Retrieves options for instances by walking up the prototype chain.
 * Ideal for defining default configurations or behaviors per type hierarchy.
 
 ### ObjNavigator
 
-* Navigate, get, and set nested values in JSON-like objects using dot-separated paths or arrays.
-* Automatically creates missing intermediate objects when needed.
-* Supports scoped navigation with `within()` and returning to parent objects with `without()`.
-
+* Navigate, get, and set nested values in JSON-like objects using dot-separated paths or arrays.  
+* Automatically create missing intermediate objects when needed.  
+* Use scoped navigation with `within()` and return to parent objects with `without()`.  
+* Clean up or refine data with `delete()` and `select()`.  
+* Explore structures declaratively with `search()`.
+ 
 ## Philosophy
 
 * **Simplicity:** Work with plain objects without introducing complex classes.

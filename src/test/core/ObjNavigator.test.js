@@ -103,7 +103,7 @@ describe("ObjNavigator.search()", () => {
     // Expect 5 navigators in total
     assert.strictEqual(results.length, 5);
   
-    const paths = results.map(n => n.path);
+    const paths = results.map(n => n.step);
     assert.deepStrictEqual(
       new Set(paths),
       new Set(["a", "b", "x", "y", undefined]), // root path may be undefined
@@ -150,10 +150,10 @@ describe("ObjNavigator.search()", () => {
     // Breadth-first search across nested navigators
     const collected = [];
     for (const n of nav.search()) {
-      collected.push(n.path);
+      collected.push(n.step);
       if (typeof n.root === "object") {
         for (const child of n.search()) {
-          collected.push(child.path);
+          collected.push(child.step);
         }
       }
     }
@@ -165,5 +165,43 @@ describe("ObjNavigator.search()", () => {
   });
 
 });
+
+describe("ObjNavigator path", function () {
+  let ancestor;
+
+  beforeEach(function () {
+    ancestor = ObjNavigator.from({});
+  });
+
+  it("should correctly compute logical path length", function () {
+    const nav = ancestor.set("a.b", {}).with("a.b");
+    assert.strictEqual(nav.path().length, 1); // logical step count
+  });
+
+  it("should correctly compute property-based path length", function () {
+    const nav = ancestor.set("a.b", {}).with("a.b");
+    assert.strictEqual(nav.path(true).length, 2); // 'a' + 'b'
+  });
+
+  it("should handle deeply nested paths", function () {
+    const nav = ancestor.set("x.y.z", {}).with("x.y.z");
+    assert.strictEqual(nav.path().length, 1);
+    assert.strictEqual(nav.path(true).length, 3);
+    assert.strictEqual(nav.path(true).last, "z");
+  });
+
+  it("should handle undefined or missing steps gracefully", function () {
+    const customNav = ancestor.set("m.n", {}).with("m.n");
+    assert.strictEqual(customNav.path().length, 1);
+    assert.strictEqual(customNav.path(true).length, 2);
+  });
+
+  it("root navigator should have empty path", function () {
+    assert.deepStrictEqual(ancestor.path().toArray(), []);
+    assert.deepStrictEqual(ancestor.path(true).toArray(), []);
+  });
+});
+
+
 
 });
